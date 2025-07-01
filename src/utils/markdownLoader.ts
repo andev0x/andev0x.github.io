@@ -6,7 +6,7 @@ interface MarkdownPost {
     slug: string;
     date: string;
     tags: string[];
-    category: string;
+    categories: string[];
     readingTime: number;
     featured: boolean;
     excerpt: string;
@@ -23,7 +23,7 @@ const markdownFiles: Record<string, MarkdownPost> = {
       slug: "terminal-web-interface",
       date: "2024-01-15",
       tags: ["web-dev", "ui-design", "terminal"],
-      category: "development",
+      categories: ["Development"],
       readingTime: 5,
       featured: true,
       excerpt: "Learn how to create a web interface that captures the essence of terminal computing while maintaining modern usability."
@@ -87,7 +87,7 @@ A well-executed terminal aesthetic can create a unique and engaging user experie
       slug: "advanced-git-workflows",
       date: "2024-01-10",
       tags: ["git", "workflow", "collaboration"],
-      category: "development",
+      categories: ["Development"],
       readingTime: 8,
       featured: false,
       excerpt: "Master Git workflows to improve team collaboration and maintain clean project history."
@@ -155,7 +155,7 @@ Mastering Git workflows improves team productivity and code quality. Choose the 
       slug: "cybersecurity-fundamentals",
       date: "2024-01-05",
       tags: ["security", "owasp", "best-practices"],
-      category: "security",
+      categories: ["Security"],
       readingTime: 10,
       featured: true,
       excerpt: "Essential cybersecurity concepts every developer should understand to build secure applications."
@@ -223,7 +223,7 @@ Security is everyone's responsibility. Build security into your development proc
       slug: "react-performance-optimization",
       date: "2023-12-28",
       tags: ["react", "performance", "optimization"],
-      category: "development",
+      categories: ["Development"],
       readingTime: 7,
       featured: false,
       excerpt: "Learn essential techniques to optimize React application performance and user experience."
@@ -314,7 +314,7 @@ Performance optimization is an ongoing process. Monitor, measure, and optimize c
       slug: "mastering-vim-advanced",
       date: "2023-12-20",
       tags: ["vim", "productivity", "tools"],
-      category: "tools",
+      categories: ["Tools"],
       readingTime: 12,
       featured: true,
       excerpt: "Advanced Vim techniques and workflows to dramatically improve your text editing efficiency."
@@ -457,7 +457,7 @@ Vim's power lies in its composability. Master the basics, then combine commands 
       slug: "getting-started-with-git",
       date: "2025-07-01",
       tags: ["git", "version-control", "beginner"],
-      category: "Code",
+      categories: ["Code", "Tools"],
       readingTime: 7,
       featured: false,
       excerpt: "Git is the backbone of modern software collaboration. Whether you're a solo coder or part of a team, knowing Git is essential."
@@ -470,12 +470,17 @@ Vim's power lies in its composability. Master the basics, then combine commands 
       slug: "about-me",
       date: "2024-07-01",
       tags: ["about"],
-      category: "about",
+      categories: ["About"],
       readingTime: 2,
       featured: false,
       excerpt: "Learn more about the author of this blog."
     },
-    content: `# About Me\n\nHi! I'm andev0x, a passionate developer and lifelong learner. I love building web apps, exploring new technologies, and sharing knowledge with the community.\n\n- 💻 Full-stack developer\n- 🛠️ Favorite tools: React, TypeScript, Vite, Tailwind CSS\n- 🌱 Always learning and experimenting\n- 📫 Connect with me on [GitHub](https://github.com/andev0x)`
+    content: `# About Me\n\nHi! I'm andev0x, a passionate developer and lifelong learner. 
+    Deep interest in backend development, system design, distributed computing and sharing knowledge with the community.\n\n
+     💻 Full-stack developer\n
+     🛠️ Favorite tools: Go, Rust, Python, React, TypeScript, Vite, Tailwind CSS\n
+     🌱 Always learning and experimenting\n
+     📫 Connect with me on [GitHub](https://anvndev.github.io)`
   },
   'my-projects': {
     frontmatter: {
@@ -483,7 +488,7 @@ Vim's power lies in its composability. Master the basics, then combine commands 
       slug: "my-projects",
       date: "2024-07-01",
       tags: ["projects"],
-      category: "project",
+      categories: ["Projects"],
       readingTime: 3,
       featured: false,
       excerpt: "A showcase of my favorite projects."
@@ -501,7 +506,7 @@ export const loadMarkdownPosts = (): BlogPost[] => {
     excerpt: frontmatter.excerpt,
     date: frontmatter.date,
     tags: frontmatter.tags,
-    category: frontmatter.category,
+    categories: frontmatter.categories,
     readingTime: frontmatter.readingTime,
     featured: frontmatter.featured,
   }));

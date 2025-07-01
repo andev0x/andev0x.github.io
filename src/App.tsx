@@ -12,6 +12,7 @@ import { BlogPost } from './types';
 function App() {
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const SPECIAL_CATEGORIES = ["About", "Projects"];
 
   const {
     searchTerm,
@@ -26,15 +27,20 @@ function App() {
   const filteredPosts = useMemo(() => {
     let posts = searchResults;
     if (selectedCategory) {
-      posts = posts.filter(post => post.category === selectedCategory);
+      posts = posts.filter(post => post.categories.includes(selectedCategory));
     }
     return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [searchResults, selectedCategory]);
 
-  // Get unique categories
+  // Get unique categories, excluding special ones
   const categories = useMemo(() => {
-    return Array.from(new Set(blogPosts.map(post => post.category)));
-  }, []);
+    const allCategories = blogPosts.flatMap(post => post.categories);
+    return Array.from(new Set(allCategories)).filter(cat => !SPECIAL_CATEGORIES.includes(cat));
+  }, [SPECIAL_CATEGORIES]);
+
+  // Get special pages
+  const aboutPost = blogPosts.find(post => post.categories.includes("About"));
+  const projectsPost = blogPosts.find(post => post.categories.includes("Projects"));
 
   // Keyboard navigation
   useKeyboard({
@@ -79,6 +85,27 @@ function App() {
       )}
 
       <main className="container mx-auto px-4 py-8">
+        {/* Special navigation for About and Projects */}
+        {!selectedPost && (
+          <div className="flex gap-4 mb-8">
+            {aboutPost && (
+              <button
+                className="px-4 py-2 rounded bg-terminal-green/10 border border-terminal-green/40 text-terminal-green font-vt323 hover:bg-terminal-green/20 transition"
+                onClick={() => setSelectedPost(aboutPost)}
+              >
+                About Me
+              </button>
+            )}
+            {projectsPost && (
+              <button
+                className="px-4 py-2 rounded bg-terminal-green/10 border border-terminal-green/40 text-terminal-green font-vt323 hover:bg-terminal-green/20 transition"
+                onClick={() => setSelectedPost(projectsPost)}
+              >
+                Projects
+              </button>
+            )}
+          </div>
+        )}
         {selectedPost ? (
           <PostDetail post={selectedPost} onBack={handleBackToList} />
         ) : (

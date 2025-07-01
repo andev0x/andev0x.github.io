@@ -61,7 +61,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
               <span>{post.readingTime} min read</span>
             </div>
             <div className="text-terminal-green/50">
-              category: {post.category}
+              categories: {post.categories.join(', ')}
             </div>
             {post.featured && (
               <span className="bg-terminal-green text-terminal-black px-2 py-1 rounded text-xs font-semibold">

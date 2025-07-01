@@ -25,7 +25,7 @@ export const Footer: React.FC = () => {
               <Github size={20} />
             </a>
             <a
-              href="https://twitter.com/andev0x"
+              href="https://twitter.com/anvndev"
               className="text-terminal-green hover-glow transition-colors"
               aria-label="Twitter"
             >

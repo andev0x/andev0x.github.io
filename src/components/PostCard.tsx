@@ -50,7 +50,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       </div>
       
       <div className="text-terminal-green/60 terminal-accent text-xs">
-        category: {post.category}
+        categories: {post.categories.join(', ')}
       </div>
     </article>
   );
