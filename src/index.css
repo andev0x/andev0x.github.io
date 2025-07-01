@@ -32,10 +32,13 @@ html {
 }
 
 body {
-  background: #0a0a0a;
   color: #00FF00;
   font-family: 'VT323', monospace;
   overflow-x: hidden;
+  background-image: url('/bgr.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }
 
 /* Terminal text effects */

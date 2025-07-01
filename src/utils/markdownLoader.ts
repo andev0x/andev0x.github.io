@@ -478,9 +478,9 @@ Vim's power lies in its composability. Master the basics, then combine commands 
     content: `# About Me\n\nHi! I'm andev0x, a passionate developer and lifelong learner. 
     Deep interest in backend development, system design, distributed computing and sharing knowledge with the community.\n\n
      💻 Full-stack developer\n
-     🛠️ Favorite tools: Go, Rust, Python, React, TypeScript, Vite, Tailwind CSS\n
+     🛠️ Favorite tools: Go, Rust, Swift, Python, React, TypeScript, Vite, Tailwind CSS\n
      🌱 Always learning and experimenting\n
-     📫 Connect with me on [GitHub](https://anvndev.github.io)`
+     📫 Connect with me on [GitHub](https://github.com/andev0x)`
   },
   'my-projects': {
     frontmatter: {
