@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/kunai.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>andev0x - Terminal Tech Blog</title>
+    <meta name="description" content="A terminal-inspired tech blog covering development, hacking, and digital adventures" />
+    <meta name="keywords" content="programming, hacking, development, tech, terminal, vim, cybersecurity" />
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="andev0x - Terminal Tech Blog" />
+    <meta property="og:description" content="A terminal-inspired tech blog covering development, hacking, and digital adventures" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://andev0x.dev" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="andev0x - Terminal Tech Blog" />
+    <meta name="twitter:description" content="A terminal-inspired tech blog covering development, hacking, and digital adventures" />
+    
+    <style>
+      /* Custom cursor */
+      * {
+        cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuNSA3TDE5IDcuNUwxNC41IDEyTDE5IDE2LjVMMTMuNSAxN0wxMiAyMkwxMC41IDE3TDUgMTYuNUw5LjUgMTJMNSA3LjVMMTAuNSA3TDEyIDJaIiBmaWxsPSIjMDBGRjAwIiBzdHJva2U9IiMwMEZGMDAiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4K'), auto;
+      }
+      
+      /* Prevent FOUC */
+      .font-loading {
+        visibility: hidden;
+      }
+      
+      /* Loading animation */
+      @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+      }
+      
+      .loading-cursor::after {
+        content: '_';
+        animation: blink 1s infinite;
+        color: #00FF00;
+      }
+    </style>
+  </head>
+  <body class="bg-terminal-black text-terminal-green font-loading">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Remove font loading class when fonts are loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.remove('font-loading');
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00FF00;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00FF88;
+}
+
+/* Selection */
+::selection {
+  background: #00FF00;
+  color: #0a0a0a;
+}
+
+/* Global styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0a0a0a;
+  color: #00FF00;
+  font-family: 'VT323', monospace;
+  overflow-x: hidden;
+}
+
+/* Terminal text effects */
+.terminal-text {
+  font-family: 'VT323', monospace;
+  text-shadow: 0 0 10px #00FF00;
+}
+
+.terminal-accent {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+}
+
+/* Hover effects */
+.hover-glow:hover {
+  text-shadow: 0 0 20px #00FF00, 0 0 30px #00FF00;
+  transition: text-shadow 0.3s ease;
+}
+
+/* Focus styles */
+.focus-glow:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #00FF00;
+  text-shadow: 0 0 10px #00FF00;
+}
+
+/* Enhanced code blocks with better readability */
+pre {
+  background: #1a1a1a !important;
+  border: 1px solid #333333 !important;
+  border-radius: 8px !important;
+  padding: 1.5rem !important;
+  overflow-x: auto;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  line-height: 1.6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+code {
+  background: #1a1a1a;
+  color: #e0e0e0;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #333333;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+/* Inline code in paragraphs */
+p code {
+  background: #1a1a1a;
+  color: #00FF88;
+  border: 1px solid #333333;
+}
+
+/* Code syntax highlighting classes */
+.code-keyword {
+  color: #00FF88;
+  font-weight: bold;
+}
+
+.code-string {
+  color: #88FF88;
+}
+
+.code-comment {
+  color: #888888;
+  font-style: italic;
+}
+
+.code-number {
+  color: #FFFF88;
+}
+
+/* Better list styling */
+li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+/* Improved paragraph spacing */
+p {
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+/* Better heading spacing */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+h1:first-child,
+h2:first-child,
+h3:first-child {
+  margin-top: 0;
+}
+
+/* Loading states */
+.loading-dots::after {
+  content: '';
+  animation: loading-dots 1.5s infinite;
+}
+
+@keyframes loading-dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
+}
+
+/* Responsive utilities */
+@media (max-width: 767px) {
+  .mobile-hidden {
+    display: none;
+  }
+  
+  pre {
+    padding: 1rem !important;
+    font-size: 0.85rem;
+  }
+  
+  code {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+}
