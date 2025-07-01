@@ -67,7 +67,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-terminal-black text-terminal-green">
+    <div className="min-h-screen relative text-terminal-green">
       <Header
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}

@@ -8,7 +8,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #023400;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -23,7 +23,7 @@
 /* Selection */
 ::selection {
   background: #00FF00;
-  color: #0a0a0a;
+  color: #023400;
 }
 
 /* Global styles */
@@ -67,7 +67,7 @@ body {
 
 /* Enhanced code blocks with better readability */
 pre {
-  background: #1a1a1a !important;
+  background: #023400 !important;
   border: 1px solid #333333 !important;
   border-radius: 8px !important;
   padding: 1.5rem !important;
@@ -78,7 +78,7 @@ pre {
 }
 
 code {
-  background: #1a1a1a;
+  background: #02340071;
   color: #e0e0e0;
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
@@ -89,14 +89,14 @@ code {
 
 /* Inline code in paragraphs */
 p code {
-  background: #1a1a1a;
+  background: #02340040;
   color: #00FF88;
-  border: 1px solid #333333;
+  border: 1px solid #023400;
 }
 
 /* Code syntax highlighting classes */
 .code-keyword {
-  color: #00FF88;
+  color: #f49223;
   font-weight: bold;
 }
 
@@ -105,12 +105,12 @@ p code {
 }
 
 .code-comment {
-  color: #888888;
+  color: #74125d;
   font-style: italic;
 }
 
 .code-number {
-  color: #FFFF88;
+  color: #eaea48;
 }
 
 /* Better list styling */

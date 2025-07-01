@@ -12,7 +12,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
   return (
     <article
       onClick={onClick}
-      className="bg-terminal-black border border-terminal-green/30 rounded-lg p-6 hover:border-terminal-green/60 transition-all duration-300 hover:shadow-lg hover:shadow-terminal-green/20 cursor-pointer animate-fade-in group"
+      className="border border-terminal-green/30 rounded-lg p-6 hover:border-terminal-green/60 transition-all duration-300 hover:shadow-lg hover:shadow-terminal-green/20 cursor-pointer animate-fade-in group"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-2 text-terminal-green/60 terminal-accent text-xs">

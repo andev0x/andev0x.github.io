@@ -21,7 +21,7 @@ const markdownFiles: Record<string, MarkdownPost> = {
     frontmatter: {
       title: "Building a Terminal-Inspired Web Interface",
       slug: "terminal-web-interface",
-      date: "2024-01-15",
+      date: "2025-01-15",
       tags: ["web-dev", "ui-design", "terminal"],
       categories: ["Development"],
       readingTime: 5,
@@ -85,7 +85,7 @@ A well-executed terminal aesthetic can create a unique and engaging user experie
     frontmatter: {
       title: "Advanced Git Workflows for Team Collaboration",
       slug: "advanced-git-workflows",
-      date: "2024-01-10",
+      date: "2025-01-10",
       tags: ["git", "workflow", "collaboration"],
       categories: ["Development"],
       readingTime: 8,
@@ -153,7 +153,7 @@ Mastering Git workflows improves team productivity and code quality. Choose the 
     frontmatter: {
       title: "Cybersecurity Fundamentals for Developers",
       slug: "cybersecurity-fundamentals",
-      date: "2024-01-05",
+      date: "2025-01-05",
       tags: ["security", "owasp", "best-practices"],
       categories: ["Security"],
       readingTime: 10,
@@ -468,7 +468,7 @@ Vim's power lies in its composability. Master the basics, then combine commands 
     frontmatter: {
       title: "About Me",
       slug: "about-me",
-      date: "2024-07-01",
+      date: "2025-07-01",
       tags: ["about"],
       categories: ["About"],
       readingTime: 2,
@@ -486,7 +486,7 @@ Vim's power lies in its composability. Master the basics, then combine commands 
     frontmatter: {
       title: "My Projects",
       slug: "my-projects",
-      date: "2024-07-01",
+      date: "2025-07-01",
       tags: ["projects"],
       categories: ["Projects"],
       readingTime: 3,

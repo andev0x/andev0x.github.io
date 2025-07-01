@@ -12,7 +12,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   onCategoryChange,
 }) => {
   return (
-    <nav className="bg-terminal-black/50 backdrop-blur-sm border-b border-terminal-green/20">
+    <nav className="backdrop-blur-sm border-b border-terminal-green/20">
       <div className="container mx-auto px-4 py-3">
         <div className="flex flex-wrap items-center gap-4">
           <span className="text-terminal-green/60 terminal-accent">
