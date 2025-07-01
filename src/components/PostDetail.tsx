@@ -2,6 +2,11 @@ import React, { useEffect } from 'react';
 import { BlogPost } from '../types';
 import { format } from 'date-fns';
 import { ArrowLeft, Clock, Tag, Calendar } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import remarkGfm from 'remark-gfm';
+import 'katex/dist/katex.min.css';
 
 interface PostDetailProps {
   post: BlogPost;
@@ -12,25 +17,6 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [post]);
-
-  // Enhanced markdown-to-HTML conversion with better syntax highlighting
-  const formatContent = (content: string) => {
-    return content
-      .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-vt323 text-terminal-green mb-4 animate-glow">$1</h1>')
-      .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-vt323 text-terminal-green mb-3 mt-6">$2</h2>')
-      .replace(/^### (.*$)/gm, '<h3 class="text-xl font-vt323 text-terminal-green mb-2 mt-4">$3</h3>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-terminal-green-bright font-semibold">$1</strong>')
-      .replace(/`([^`]+)`/g, '<code class="bg-code-bg text-code-text px-2 py-1 rounded font-mono text-sm border border-code-border">$1</code>')
-      .replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-        const language = lang || 'text';
-        return `<pre class="bg-code-bg border border-code-border rounded-lg p-4 overflow-x-auto my-6 shadow-lg"><div class="text-code-comment text-xs mb-2 font-mono">${language}</div><code class="font-mono text-sm text-code-text block leading-relaxed">${code.trim()}</code></pre>`;
-      })
-      .replace(/^\- (.*$)/gm, '<li class="text-terminal-green/90 mb-2 ml-4">• $1</li>')
-      .replace(/^(\d+)\. (.*$)/gm, '<li class="text-terminal-green/90 mb-2 ml-4">$1. $2</li>')
-      .replace(/\n\n/g, '</p><p class="text-terminal-green/90 font-vt323 text-lg mb-4 leading-relaxed">')
-      .replace(/^(?!<[h|l|p|c|d])/gm, '<p class="text-terminal-green/90 font-vt323 text-lg mb-4 leading-relaxed">')
-      + '</p>';
-  };
 
   return (
     <article className="animate-fade-in">
@@ -89,10 +75,33 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
           </header>
 
           {/* Post Content */}
-          <div 
-            className="prose prose-terminal max-w-none"
-            dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
-          />
+          <div className="prose prose-terminal max-w-none">
+            <ReactMarkdown
+              remarkPlugins={[remarkMath, remarkGfm]}
+              rehypePlugins={[rehypeKatex]}
+              components={{
+                a: (props) => (
+                  <a {...props} className="text-terminal-green underline hover:text-terminal-green-bright transition-colors" target="_blank" rel="noopener noreferrer" />
+                ),
+                code({node, inline, className, children, ...props}: any) {
+                  return (
+                    <code
+                      className={
+                        inline
+                          ? "bg-code-bg text-code-text px-2 py-1 rounded font-mono text-sm border border-code-border"
+                          : "bg-code-bg border border-code-border rounded-lg p-4 overflow-x-auto my-6 shadow-lg font-mono text-sm text-code-text block leading-relaxed"
+                      }
+                      {...props}
+                    >
+                      {children}
+                    </code>
+                  );
+                },
+              }}
+            >
+              {post.content}
+            </ReactMarkdown>
+          </div>
 
           {/* Footer */}
           <footer className="mt-12 pt-8 border-t border-terminal-green/30">

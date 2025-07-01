@@ -9,6 +9,8 @@ import { useSearch } from './hooks/useSearch';
 import { blogPosts } from './data/posts';
 import { BlogPost } from './types';
 
+console.log('Loaded blog posts:', blogPosts);
+
 function App() {
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

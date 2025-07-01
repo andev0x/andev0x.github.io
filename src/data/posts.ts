@@ -1,4 +1,3 @@
-import { BlogPost } from '../types';
-import { loadMarkdownPosts } from '../utils/markdownLoader';
+import { blogPosts } from '../utils/markdownLoader';
 
-export const blogPosts: BlogPost[] = loadMarkdownPosts();
+export { blogPosts };
