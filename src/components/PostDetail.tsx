@@ -7,6 +7,8 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import 'katex/dist/katex.min.css';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface PostDetailProps {
   post: BlogPost;
@@ -84,13 +86,25 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
                   <a {...props} className="text-terminal-green underline hover:text-terminal-green-bright transition-colors" target="_blank" rel="noopener noreferrer" />
                 ),
                 code({node, inline, className, children, ...props}: any) {
-                  return (
+                  const match = /language-(\w+)/.exec(className || '');
+                  return !inline && match ? (
+                    <SyntaxHighlighter
+                      style={atomDark}
+                      language={match[1]}
+                      PreTag="div"
+                      customStyle={{
+                        borderRadius: '0.5rem',
+                        margin: '1.5rem 0',
+                        fontSize: '1rem',
+                        background: 'none',
+                      }}
+                      {...props}
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  ) : (
                     <code
-                      className={
-                        inline
-                          ? "bg-code-bg text-code-text px-2 py-1 rounded font-mono text-sm border border-code-border"
-                          : "bg-code-bg border border-code-border rounded-lg p-4 overflow-x-auto my-6 shadow-lg font-mono text-sm text-code-text block leading-relaxed"
-                      }
+                      className="bg-code-bg text-code-text px-2 py-1 rounded font-mono text-sm border border-code-border"
                       {...props}
                     >
                       {children}

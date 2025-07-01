@@ -85,10 +85,10 @@ Use tools like Carbon or GitHub gists to format code snippets.
 💡 8. Use Logs Wisely
 Rather than dumping everything with console.log, structure your logs:
 
-ts
-Sao chép
-Chỉnh sửa
+```ts
 console.log('[UserService] fetchUserById', { userId });
+```
+
 And remove unnecessary logs once done — keep your codebase clean.
 
 🔁 9. Version Control is Your Friend
