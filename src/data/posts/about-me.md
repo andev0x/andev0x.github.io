@@ -42,7 +42,7 @@ I believe in simplicity, clean code, and community-driven learning.
 
 ## 📫 Connect With Me
 
-- GitHub: [github.com/andev0x](https://github.com/andev0x)
+- GitHub: [andev0x](https://github.com/andev0x)
 - Contact: [Info](https://anvndev.github.io)
 
 

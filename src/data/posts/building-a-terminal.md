@@ -13,7 +13,7 @@ featured: true
 
 In this post, we'll explore how to create a web interface that captures the essence of terminal computing while maintaining modern usability.
 
----
+
 
 ## 🎯 Goals
 
@@ -24,7 +24,7 @@ Creating a terminal-inspired interface requires balancing nostalgia with functio
 - 📱 Ensure responsive design across devices  
 - ⚡ Optimize performance for smooth animations  
 
----
+
 
 ## 🎨 Color Palette
 
@@ -34,7 +34,7 @@ We use a carefully selected palette:
 - **Primary:** `#00FF00` (neon green)  
 - **Accents:** Various shades of green  
 
----
+
 
 ## ✍️ Typography
 
@@ -42,7 +42,7 @@ We use a carefully selected palette:
 - **Press Start 2P** for UI accents  
 - **Monospace** for code blocks  
 
----
+
 
 ## 🧭 Vim-style Navigation
 

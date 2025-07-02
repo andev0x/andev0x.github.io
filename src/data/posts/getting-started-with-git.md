@@ -20,16 +20,16 @@ Git is the backbone of modern software collaboration. Whether you're a solo code
 
 - **macOS:**
 
-  ```bash
+```bash
   brew install git
 ```
 
-* **Ubuntu/Debian:**
+- **Ubuntu/Debian:**
 
-  ```bash
+```bash
   sudo apt update
   sudo apt install git
-  ```
+```
 
 * **Windows:**
   Download and install from [https://git-scm.com/download/win](https://git-scm.com/download/win)
@@ -46,9 +46,9 @@ git config --list
 ## Starting a Project with Git
 
 ```bash
-git init                     # Initialize a local Git repo
-git add .                   # Add all files to staging
-git commit -m "Initial commit"  # Make your first commit
+git init                          # Initialize a local Git repo
+git add .                         # Add all files to staging
+git commit -m "Initial commit"    # Make your first commit
 ```
 
 ## Working with Git Remotes
@@ -128,7 +128,7 @@ git commit -m "Initial commit"  # Make your first commit
 Git may feel overwhelming at first, but with daily usage, it becomes a natural part of your workflow. Start small by version-controlling your personal projects, and build your confidence step by step. Happy coding! 🚀 
 
 
-Happy debugging! 🐞
+## Happy debugging! 🐞
 
 Written by: [andev0x]
 Last updated: July 1, 2025

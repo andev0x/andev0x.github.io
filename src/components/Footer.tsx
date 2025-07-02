@@ -1,5 +1,5 @@
 import React from 'react';
-import { Terminal, Github, Twitter, Rss } from 'lucide-react';
+import { Terminal, Github, Twitter, Mail } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -32,18 +32,18 @@ export const Footer: React.FC = () => {
               <Twitter size={20} />
             </a>
             <a
-              href="/rss.xml"
+              href="https://anvndev.github.io"
               className="text-terminal-green hover-glow transition-colors"
-              aria-label="RSS Feed"
+              aria-label="Contact"
             >
-              <Rss size={20} />
+              <Mail size={20} />
             </a>
           </div>
         </div>
         
         <div className="mt-6 pt-4 border-t border-terminal-green/20 text-center">
           <div className="text-terminal-green/60 terminal-accent text-xs">
-            © 2025 andev0x. All rights reserved. | Built with React & Terminal Love
+            © 2025 andev0x. All rights reserved.
           </div>
         </div>
       </div>

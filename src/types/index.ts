@@ -21,3 +21,33 @@ export interface KeyboardShortcut {
   description: string;
   action: () => void;
 }
+
+// Comment type for a blog post
+export interface Comment {
+  id: string;
+  postId: string; // BlogPost.id or slug
+  author: string;
+  content: string;
+  createdAt: string;
+}
+
+// Rating type for a blog post
+export interface Rating {
+  postId: string; // BlogPost.id or slug
+  average: number; // Average rating (e.g., 4.2)
+  count: number;   // Number of ratings
+  userRating?: number; // Optional: current user's rating
+}
+
+// API interface for comments
+export interface CommentAPI {
+  getComments(postId: string): Promise<Comment[]>;
+  addComment(postId: string, author: string, content: string): Promise<Comment>;
+  deleteComment(commentId: string): Promise<void>;
+}
+
+// API interface for ratings
+export interface RatingAPI {
+  getRating(postId: string): Promise<Rating>;
+  ratePost(postId: string, value: number): Promise<Rating>;
+}

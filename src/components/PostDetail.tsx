@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BlogPost } from '../types';
+import { BlogPost, Comment, Rating } from '../types';
 import { format } from 'date-fns';
 import { ArrowLeft, Clock, Tag, Calendar } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -9,6 +9,8 @@ import remarkGfm from 'remark-gfm';
 import 'katex/dist/katex.min.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { StarRating } from './StarRating';
+import { CommentSection } from './CommentSection';
 
 interface PostDetailProps {
   post: BlogPost;
@@ -116,6 +118,20 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
               {post.content}
             </ReactMarkdown>
           </div>
+
+          {/* Rating & Comments Section */}
+          <section className="mt-12 mb-8">
+            {/* Rating UI */}
+            <div className="mb-8">
+              <h2 className="font-vt323 text-terminal-green text-2xl mb-2">Rate this article</h2>
+              <StarRating postId={post.id} />
+            </div>
+            {/* Comments UI */}
+            <div>
+              <h2 className="font-vt323 text-terminal-green text-2xl mb-2">Comments</h2>
+              <CommentSection postId={post.id} />
+            </div>
+          </section>
 
           {/* Footer */}
           <footer className="mt-12 pt-8 border-t border-terminal-green/30">

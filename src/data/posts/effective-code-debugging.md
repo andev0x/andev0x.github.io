@@ -13,7 +13,7 @@ featured: false
 
 Debugging is not just about fixing bugs — it's a process of understanding how and why code behaves the way it does. In this post, we'll explore tried-and-true techniques to debug your code more effectively, save time, and maintain your sanity.
 
----
+
 
 ## 🔍 1. Reproduce the Bug Consistently
 
@@ -21,7 +21,7 @@ Before fixing anything, ensure you can **reliably reproduce** the bug. Document 
 
 **Tip**: Use logs, screenshots, or screen recordings for better clarity.
 
----
+
 
 ## 🧭 2. Read the Error Message Carefully
 
@@ -30,7 +30,7 @@ Most developers skip the most obvious clues — error messages. Don't just skim 
 - **Stack traces** often point directly to the problematic file and line.
 - Read from **bottom to top** in most JS/TS stack traces to understand the root cause.
 
----
+
 
 ## 🛠️ 3. Use a Step Debugger
 
@@ -40,7 +40,7 @@ Instead of relying solely on `console.log`, use a step debugger:
 - For Node.js: Use `node --inspect` or the built-in debugger.
 - For browsers: Open DevTools → Sources → set breakpoints.
 
----
+
 
 ## 🧾 4. Isolate the Problem
 
@@ -52,7 +52,7 @@ It forces you to:
 - Understand dependencies more clearly.
 - Often solve the bug in the process!
 
----
+
 
 ## 🧪 5. Write Tests (Yes, Even During Debugging)
 
@@ -116,7 +116,7 @@ Familiarity with these can dramatically reduce debugging time.
 🚀 Conclusion
 Debugging is a skill that improves with practice and reflection. By following a structured approach and using the right tools, you can turn even the most frustrating bugs into learning opportunities.
 
-Happy debugging! 🐞
+## Happy debugging! 🐞
 
 Written by: [andev0x]
 Last updated: July 1, 2025
