@@ -30,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Logo */}
         <div className="flex items-center space-x-4">
           <h1 className="text-2xl md:text-4xl font-vt323 animate-pulse-glow hover-glow">
-            <span className="text-terminal-green">andev0x</span>
+            <span className="text-terminal-green">sudo_【アン】andev0x</span>
           </h1>
           <div className="hidden md:block text-terminal-green/60 terminal-accent">
             [a shadow never rests]

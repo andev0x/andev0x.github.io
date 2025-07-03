@@ -11,40 +11,54 @@ featured: true
 
 # 👋 About Me
 
-Hi! I'm **andev0x**, a passionate developer and lifelong learner.
+Hi! I'm **andev0x** — real name *An Van Nguyen* — a passionate developer who enjoys building robust systems, crafting clean backend architecture, and continuously learning.
+
+I care deeply about developer experience, maintainable codebases, and minimal yet powerful tooling.
 
 
 
 ## 🔍 Interests
 
 - ⚙️ Backend development  
-- 🧱 System design  
+- 🧱 System design & architecture  
 - 🌐 Distributed computing  
-- 📚 Sharing knowledge with the community  
+- 📚 Writing, documenting, and sharing with the dev community  
+
 
 
 ## 💻 Full-Stack Developer
+
+While my heart is in the backend, I’m fully comfortable moving across the stack to bring ideas to life.
 
 ### 🛠️ Favorite Tools & Technologies
 
 - **Languages:** Go, Rust, Swift, Python, Dart  
 - **Frontend:** React, TypeScript  
-- **Tooling:** Vite, Tailwind CSS
+- **Tooling:** Vite, Tailwind CSS, Neovim, Ghostty  
+- **Philosophy:** *“The simpler the better — optimize until it can’t be optimized anymore.”*
 
 
 
 ## 🌱 Developer Philosophy
 
-I'm always experimenting, building side projects, and optimizing workflows.  
-I believe in simplicity, clean code, and community-driven learning.
+I'm always building, learning, and refining.
+
+**I believe in:**
+
+*_Clean, testable, and readable code  
+*_Small, composable tools over big frameworks  
+*_Open source contribution and tech as a force for good  
+*_Building projects that solve real problems  
 
 
 
-## 📫 Connect With Me
+**📫 Connect With Me**
 
-- GitHub: [andev0x](https://github.com/andev0x)
-- Contact: [Info](https://anvndev.github.io)
+- 🐙 GitHub: [@andev0x](https://github.com/andev0x)  
+- 🌐 Website: [anvndev.github.io](https://anvndev.github.io)  
+- 📨 Reach out: Open for collaboration and ideas!
 
 
 
-Thanks for dropping by!
+Thanks for stopping by! 🙌  
+Feel free to explore my projects, give feedback, or just say hi.
