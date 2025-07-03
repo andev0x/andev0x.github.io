@@ -39,7 +39,7 @@ Open your terminal and run:
 ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
-> Use `-t rsa -b 4096` if your system doesn’t support `ed25519`.
+> Use `-t rsa -b 4096` if your system doesn’t support `ed25519`.  
 
 You'll see:
 
