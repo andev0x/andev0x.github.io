@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html, body {
-  cursor: url('./kunai.svg') 32 32, auto;
+  cursor: url('/kunai.svg') 32 32, auto;
 }
 
 /* Custom scrollbar */

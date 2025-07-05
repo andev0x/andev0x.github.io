@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body { font-family: monospace; margin: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { margin: 5px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>Backend API Test</h1>
+    
+    <div class="test">
+        <h3>Test Backend Health</h3>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="health-result"></div>
+    </div>
+    
+    <div class="test">
+        <h3>Test Comments API</h3>
+        <button onclick="testGetComments()">Get Comments</button>
+        <button onclick="testPostComment()">Post Comment</button>
+        <div id="comments-result"></div>
+    </div>
+    
+    <div class="test">
+        <h3>Test Ratings API</h3>
+        <button onclick="testGetRatings()">Get Ratings</button>
+        <button onclick="testPostRating()">Post Rating</button>
+        <div id="ratings-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api/v1';
+        
+        function logResult(elementId, success, message, data = null) {
+            const element = document.getElementById(elementId);
+            element.className = success ? 'success' : 'error';
+            element.innerHTML = `<strong>${success ? 'SUCCESS' : 'ERROR'}:</strong> ${message}`;
+            if (data) {
+                element.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+        }
+        
+        async function testHealth() {
+            try {
+                const response = await fetch('http://localhost:8080/test');
+                const data = await response.json();
+                logResult('health-result', true, 'Health check passed', data);
+            } catch (error) {
+                logResult('health-result', false, `Health check failed: ${error.message}`);
+            }
+        }
+        
+        async function testGetComments() {
+            try {
+                const response = await fetch(`${API_BASE}/posts/test-slug/comments`);
+                const data = await response.json();
+                logResult('comments-result', true, 'Get comments successful', data);
+            } catch (error) {
+                logResult('comments-result', false, `Get comments failed: ${error.message}`);
+            }
+        }
+        
+        async function testPostComment() {
+            try {
+                const response = await fetch(`${API_BASE}/posts/test-slug/comments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        author: 'Test User',
+                        content: 'Test comment from browser'
+                    })
+                });
+                const data = await response.json();
+                logResult('comments-result', true, 'Post comment successful', data);
+            } catch (error) {
+                logResult('comments-result', false, `Post comment failed: ${error.message}`);
+            }
+        }
+        
+        async function testGetRatings() {
+            try {
+                const response = await fetch(`${API_BASE}/posts/test-slug/ratings`);
+                const data = await response.json();
+                logResult('ratings-result', true, 'Get ratings successful', data);
+            } catch (error) {
+                logResult('ratings-result', false, `Get ratings failed: ${error.message}`);
+            }
+        }
+        
+        async function testPostRating() {
+            try {
+                const response = await fetch(`${API_BASE}/posts/test-slug/ratings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        value: 5
+                    })
+                });
+                const data = await response.json();
+                logResult('ratings-result', true, 'Post rating successful', data);
+            } catch (error) {
+                logResult('ratings-result', false, `Post rating failed: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html> 
