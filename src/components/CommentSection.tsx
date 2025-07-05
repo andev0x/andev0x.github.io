@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Comment } from '../types';
+import { fetchComments, postComment } from '../utils/api';
 
 interface CommentSectionProps {
   postId: string;
@@ -10,30 +11,57 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // TODO: Replace with API call to fetch comments
-  // useEffect(() => { ... }, [postId]);
+  // Fetch comments on component mount
+  useEffect(() => {
+    const loadComments = async () => {
+      try {
+        setLoading(true);
+        const fetchedComments = await fetchComments(postId);
+        setComments(fetchedComments);
+      } catch (err) {
+        setError('Failed to load comments');
+        console.error('Error loading comments:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadComments();
+  }, [postId]);
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!author.trim() || !content.trim()) return;
-    setLoading(true);
-    // TODO: Call API to add comment
-    const newComment: Comment = {
-      id: Math.random().toString(36).slice(2),
-      postId,
-      author,
-      content,
-      createdAt: new Date().toISOString(),
-    };
-    setComments([newComment, ...comments]);
-    setAuthor('');
-    setContent('');
-    setLoading(false);
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const newComment = await postComment(postId, {
+        author: author.trim(),
+        content: content.trim(),
+      });
+      
+      setComments([newComment, ...comments]);
+      setAuthor('');
+      setContent('');
+    } catch (err) {
+      setError('Failed to post comment');
+      console.error('Error posting comment:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="mt-4">
+      {error && (
+        <div className="mb-4 p-3 bg-red-900/20 border border-red-500/40 rounded text-red-400 font-vt323 text-sm">
+          {error}
+        </div>
+      )}
       <form onSubmit={handleAddComment} className="mb-6">
         <div className="flex flex-col md:flex-row gap-2 mb-2">
           <input
