@@ -14,7 +14,6 @@ console.log('Loaded blog posts:', blogPosts);
 function App() {
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const SPECIAL_CATEGORIES = ["About", "Projects"];
 
   const {
     searchTerm,
@@ -36,9 +35,10 @@ function App() {
 
   // Get unique categories, excluding special ones
   const categories = useMemo(() => {
+    const SPECIAL_CATEGORIES = ["About", "Projects"];
     const allCategories = blogPosts.flatMap(post => post.categories);
     return Array.from(new Set(allCategories)).filter(cat => !SPECIAL_CATEGORIES.includes(cat));
-  }, [SPECIAL_CATEGORIES]);
+  }, []);
 
   // Get special pages
   const aboutPost = blogPosts.find(post => post.categories.includes("About"));

@@ -10,7 +10,6 @@ export const StarRating: React.FC<StarRatingProps> = ({ postId }) => {
   const [selected, setSelected] = useState<number | null>(null);
   const [averageRating, setAverageRating] = useState<number>(0);
   const [totalRatings, setTotalRatings] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch ratings on component mount
@@ -34,7 +33,6 @@ export const StarRating: React.FC<StarRatingProps> = ({ postId }) => {
 
   const handleClick = async (value: number) => {
     try {
-      setLoading(true);
       setError(null);
       
       await postRating(postId, { value });
@@ -51,8 +49,6 @@ export const StarRating: React.FC<StarRatingProps> = ({ postId }) => {
     } catch (err) {
       setError('Failed to submit rating');
       console.error('Error posting rating:', err);
-    } finally {
-      setLoading(false);
     }
   };
 

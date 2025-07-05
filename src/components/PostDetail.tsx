@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BlogPost, Comment, Rating } from '../types';
+import { BlogPost } from '../types';
 import { format } from 'date-fns';
 import { ArrowLeft, Clock, Tag, Calendar } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -87,7 +87,8 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
                 a: (props) => (
                   <a {...props} className="text-terminal-green underline hover:text-terminal-green-bright transition-colors" target="_blank" rel="noopener noreferrer" />
                 ),
-                code({node, inline, className, children, ...props}: any) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                code({inline, className, children, ...props}: any) {
                   const match = /language-(\w+)/.exec(className || '');
                   return !inline && match ? (
                     <SyntaxHighlighter
