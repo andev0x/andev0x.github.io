@@ -122,14 +122,8 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
 
           {/* Rating & Comments Section */}
           <section className="mt-12 mb-8">
-            {/* Rating UI */}
-            <div className="mb-8">
-              <h2 className="font-vt323 text-terminal-green text-2xl mb-2">Rate this article</h2>
-              <StarRating postId={post.id} />
-            </div>
-            {/* Comments UI */}
             <div>
-              <h2 className="font-vt323 text-terminal-green text-2xl mb-2">Comments</h2>
+              <h2 className="font-vt323 text-terminal-green text-2xl mb-2">Rate & Comment</h2>
               <CommentSection postId={post.id} />
             </div>
           </section>

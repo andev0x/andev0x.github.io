@@ -10,6 +10,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
+  const [rating, setRating] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,20 +34,20 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!author.trim() || !content.trim()) return;
-    
+    if (!author.trim() || !content.trim() || rating == null) return;
     try {
       setLoading(true);
       setError(null);
-      
+      // Send rating with comment
       const newComment = await postComment(postId, {
         author: author.trim(),
         content: content.trim(),
+        rating,
       });
-      
       setComments([newComment, ...comments]);
       setAuthor('');
       setContent('');
+      setRating(null);
     } catch (err) {
       setError('Failed to post comment');
       console.error('Error posting comment:', err);
@@ -73,6 +74,21 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
             required
           />
         </div>
+        {/* Star rating selector */}
+        <div className="flex items-center gap-2 mb-2">
+          <span className="font-vt323 text-terminal-green/70">Your rating:</span>
+          {[1,2,3,4,5].map(star => (
+            <button
+              type="button"
+              key={star}
+              className={`text-2xl ${rating && rating >= star ? 'text-terminal-green' : 'text-terminal-green/30'}`}
+              onClick={() => setRating(star)}
+              aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+            >
+              ★
+            </button>
+          ))}
+        </div>
         <textarea
           className="bg-transparent border border-terminal-green/40 rounded px-3 py-2 text-terminal-green placeholder-terminal-green/60 font-vt323 w-full mb-2"
           placeholder="Add a comment..."
@@ -84,7 +100,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
         <button
           type="submit"
           className="bg-terminal-green text-terminal-black font-vt323 px-4 py-1 rounded hover-glow transition-colors border border-terminal-green/60 mt-2 text-sm w-auto"
-          disabled={loading}
+          disabled={loading || rating == null}
         >
           {loading ? 'Posting...' : 'Post Comment'}
         </button>
@@ -98,7 +114,17 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
               <li key={comment.id} className="border border-terminal-green/20 rounded p-4 bg-terminal-black/60">
                 <div className="flex items-center mb-1">
                   <span className="font-vt323 text-terminal-green text-base mr-2">{comment.author}</span>
-                  <span className="text-terminal-green/40 text-xs">{new Date(comment.createdAt).toLocaleString()}</span>
+                  <span className="text-terminal-green/40 text-xs mr-2">{new Date(comment.createdAt).toLocaleString()}</span>
+                  {/* Show rating if present */}
+                  {comment.rating && (
+                    <span className="ml-2 text-terminal-green/80 text-lg">
+                      {[1,2,3,4,5].map(star => (
+                        <span key={star}>
+                          {comment.rating >= star ? '★' : '☆'}
+                        </span>
+                      ))}
+                    </span>
+                  )}
                 </div>
                 <div className="text-terminal-green/80 font-vt323 text-sm whitespace-pre-line">{comment.content}</div>
               </li>

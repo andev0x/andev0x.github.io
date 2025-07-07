@@ -51,7 +51,7 @@ export async function fetchComments(postId: string) {
   return comments;
 }
 
-export async function postComment(postId: string, comment: { author: string; content: string }) {
+export async function postComment(postId: string, comment: { author: string; content: string; rating?: number }) {
   console.log('Posting comment to:', `${API_BASE_URL}/posts/${postId}/comments`);
   console.log('Comment data:', comment);
   
@@ -69,8 +69,15 @@ export async function postComment(postId: string, comment: { author: string; con
       
       if (response.ok) {
         const newComment = await response.json();
-        console.log('Backend response:', newComment);
-        return newComment;
+        // Map backend fields to frontend fields
+        return {
+          id: newComment.id,
+          postId: newComment.postId || newComment.post_id || postId,
+          author: newComment.author || newComment.name,
+          content: newComment.content,
+          createdAt: newComment.createdAt || newComment.created_at || newComment.timestamp,
+          rating: newComment.rating,
+        };
       } else {
         const error = await response.text();
         throw new Error(`Backend error: ${error}`);

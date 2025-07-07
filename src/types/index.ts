@@ -29,6 +29,7 @@ export interface Comment {
   author: string;
   content: string;
   createdAt: string;
+  rating?: number;
 }
 
 // Rating type for a blog post
