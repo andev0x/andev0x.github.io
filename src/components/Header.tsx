@@ -7,6 +7,7 @@ interface HeaderProps {
   isSearchActive: boolean;
   onSearchActivate: () => void;
   onSearchDeactivate: () => void;
+  onAboutMe: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -15,6 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
   isSearchActive,
   onSearchActivate,
   onSearchDeactivate,
+  onAboutMe,
 }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Search */}
+        {/* Search and About Me */}
         <div className="flex items-center space-x-4">
           <div className="relative">
             {isSearchActive ? (
@@ -59,14 +61,23 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               </div>
             ) : (
-              <button
-                onClick={onSearchActivate}
-                className="flex items-center space-x-2 text-terminal-green hover-glow transition-colors"
-                aria-label="Search posts"
-              >
-                <Search size={20} />
-                <span className="hidden md:inline font-vt323">Search [/]</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={onSearchActivate}
+                  className="flex items-center space-x-2 text-terminal-green hover-glow transition-colors"
+                  aria-label="Search posts"
+                >
+                  <Search size={20} />
+                  <span className="hidden md:inline font-vt323">Search [/]</span>
+                </button>
+                <button
+                  onClick={onAboutMe}
+                  className="flex items-center space-x-2 text-terminal-green hover-glow transition-colors border border-terminal-green/40 rounded px-3 py-1 font-vt323"
+                  aria-label="About Me"
+                >
+                  <span>Info</span>
+                </button>
+              </div>
             )}
           </div>
         </div>

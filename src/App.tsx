@@ -8,12 +8,14 @@ import { useKeyboard } from './hooks/useKeyboard';
 import { useSearch } from './hooks/useSearch';
 import { blogPosts } from './data/posts';
 import { BlogPost } from './types';
+import { TerminalAboutMe } from './components/TerminalAboutMe';
 
 console.log('Loaded blog posts:', blogPosts);
 
 function App() {
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showAboutMe, setShowAboutMe] = useState(false);
 
   const {
     searchTerm,
@@ -68,14 +70,23 @@ function App() {
     setSelectedPost(null);
   };
 
+  const handleSearchActivate = () => {
+    activateSearch();
+  };
+
+  const handleSearchDeactivate = () => {
+    deactivateSearch();
+  };
+
   return (
-    <div className="min-h-screen relative text-terminal-green">
+    <div className="min-h-screen text-terminal-green">
       <Header
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         isSearchActive={isSearchActive}
-        onSearchActivate={activateSearch}
-        onSearchDeactivate={deactivateSearch}
+        onSearchActivate={handleSearchActivate}
+        onSearchDeactivate={handleSearchDeactivate}
+        onAboutMe={() => setShowAboutMe(true)}
       />
 
       {!selectedPost && (
@@ -127,6 +138,21 @@ function App() {
       </main>
 
       <Footer />
+
+      {showAboutMe && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="relative">
+            <button
+              onClick={() => setShowAboutMe(false)}
+              className="absolute top-1 right-2 text-terminal-green/60 hover:text-terminal-green bg-black/60 rounded-full p-2 border border-terminal-green/30"
+              aria-label="Close About Me"
+            >
+              ×
+            </button>
+            <TerminalAboutMe />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
