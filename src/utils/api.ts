@@ -30,8 +30,14 @@ export async function fetchComments(postId: string) {
       const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments`);
       if (response.ok) {
         const comments = await response.json();
-        console.log('Backend comments:', comments);
-        return comments;
+        // Map backend fields to frontend fields
+        return comments.map((c: any) => ({
+          id: c.id,
+          postId: c.postId || c.post_id || postId,
+          author: c.author || c.name,
+          content: c.content,
+          createdAt: c.createdAt || c.created_at || c.timestamp,
+        }));
       }
     } catch (error) {
       console.warn('Backend unavailable, using mock data:', error);
@@ -102,8 +108,34 @@ export async function fetchRatings(postId: string) {
       const response = await fetch(`${API_BASE_URL}/posts/${postId}/ratings`);
       if (response.ok) {
         const ratings = await response.json();
-        console.log('Backend ratings:', ratings);
-        return ratings;
+        // If backend returns an array, aggregate; if object, map fields
+        if (Array.isArray(ratings)) {
+          // Legacy: array of ratings
+          const values = ratings.map((r: any) => r.value || r.rating || 0);
+          const average = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+          return {
+            postId,
+            average,
+            count: values.length,
+            ratings: ratings.map((r: any) => ({
+              id: r.id,
+              value: r.value || r.rating,
+              timestamp: r.timestamp || r.createdAt || r.created_at,
+            })),
+          };
+        } else {
+          // New API: object with average, total/count, ratings
+          return {
+            postId,
+            average: ratings.average ?? 0,
+            count: ratings.total ?? ratings.count ?? 0,
+            ratings: (ratings.ratings || []).map((r: any) => ({
+              id: r.id,
+              value: r.value || r.rating,
+              timestamp: r.timestamp || r.createdAt || r.created_at,
+            })),
+          };
+        }
       }
     } catch (error) {
       console.warn('Backend unavailable, using mock data:', error);
