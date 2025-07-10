@@ -142,14 +142,7 @@ function App() {
       {showAboutMe && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="relative">
-            <button
-              onClick={() => setShowAboutMe(false)}
-              className="absolute top-1 right-2 text-terminal-green/60 hover:text-terminal-green bg-black/60 rounded-full p-2 border border-terminal-green/30"
-              aria-label="Close About Me"
-            >
-              ×
-            </button>
-            <TerminalAboutMe />
+            <TerminalAboutMe onClose={() => setShowAboutMe(false)} />
           </div>
         </div>
       )}

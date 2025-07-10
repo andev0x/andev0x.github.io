@@ -34,7 +34,7 @@ function useTypingEffect(text: string, speed = 30) {
   return displayed;
 }
 
-export const TerminalAboutMe: React.FC = () => {
+export const TerminalAboutMe: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const intro = ">_ Hi, I'm anvndev! Welcome to my terminal. I'm a developer passionate about building cool things with code.";
   const typedIntro = useTypingEffect(intro, 25);
 
@@ -42,7 +42,12 @@ export const TerminalAboutMe: React.FC = () => {
     <div className="bg-black/60 backdrop-blur-md text-green-400 font-mono p-6 rounded-lg shadow-lg max-w-xl mx-auto mt-12 border border-green-700">
       {/* Terminal header */}
       <div className="flex items-center mb-4">
-        <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+        <button
+          type="button"
+          className="w-3 h-3 bg-red-500 rounded-full mr-2 focus:outline-none focus:ring-2 focus:ring-red-400 hover:scale-110 transition-transform"
+          aria-label="Close About Me"
+          onClick={onClose}
+        />
         <span className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
         <span className="w-3 h-3 bg-green-500 rounded-full"></span>
         <span className="ml-4 text-green-300">anvndev@macbook:~$</span>
