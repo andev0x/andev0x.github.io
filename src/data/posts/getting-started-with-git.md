@@ -10,9 +10,9 @@ readingTime: 1
 featured: false
 ---
 
-Git is the backbone of modern software collaboration. Whether you're a solo coder or part of a team, knowing Git is essential.
+**Git is the backbone of modern software collaboration. Whether you're a solo coder or part of a team, knowing Git is essential.**
 
-## What is Git?
+## _What is Git?_
 
 **Git** is a free and open-source distributed version control system. It helps you track changes, collaborate with others, and revert to previous versions of your code — from small personal projects to large-scale systems.
 
@@ -130,5 +130,5 @@ Git may feel overwhelming at first, but with daily usage, it becomes a natural p
 
 ## Happy debugging! 🐞
 
-Written by: [andev0x]
-Last updated: July 1, 2025
+**Written by:** [andev0x](https://github.com/andev0x)  
+**Last updated:** July 1, 2025  

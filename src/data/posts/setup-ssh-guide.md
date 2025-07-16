@@ -9,11 +9,11 @@ readingTime: 4
 featured: true
 ---
 
-# 🔐 How to Set Up SSH for GitHub and Remote Servers
+# 🔐 **How to Set Up SSH for GitHub and Remote Servers**
 
 SSH (Secure Shell) is an essential tool for secure communication between your machine and remote services like GitHub, servers, and containers.
 
-In this guide, you'll learn:
+**In this guide, you'll learn:**
 
 - How to generate SSH keys  
 - How to add them to GitHub  
@@ -22,7 +22,7 @@ In this guide, you'll learn:
 
 
 
-## 🧰 Prerequisites
+## **🧰 Prerequisites**
 
 - A terminal (macOS/Linux) or Git Bash (Windows)  
 - Git installed  
@@ -31,7 +31,7 @@ In this guide, you'll learn:
 
 
 
-## 🗝️ Step 1: Generate SSH Key Pair
+## *🗝️ Step 1: Generate SSH Key Pair*
 
 Open your terminal and run:
 
@@ -55,11 +55,11 @@ Next:
 Enter passphrase (empty for no passphrase):
 ```
 
-💡 _Use a strong passphrase or leave it empty for convenience (less secure)._
+> *💡 Use a strong passphrase or leave it empty for convenience (less secure).*
 
 
 
-## 📂 Step 2: Add SSH Key to Your SSH Agent
+## **📂 Step 2: Add SSH Key to Your SSH Agent**
 
 Start the SSH agent:
 
@@ -81,7 +81,7 @@ ssh-add ~/.ssh/your_custom_key
 
 
 
-## 🖥️ Step 3: Add Public Key to GitHub
+## **🖥️ Step 3: Add Public Key to GitHub**
 
 Copy your public key to clipboard:
 
@@ -98,7 +98,7 @@ Copy your public key to clipboard:
   clip < ~/.ssh/id_ed25519.pub
   ```
 
-Then:
+*Then:*
 
 1. Go to **GitHub → Settings → SSH and GPG keys**  
 2. Click **"New SSH key"**  
@@ -106,13 +106,13 @@ Then:
 
 
 
-## ✅ Step 4: Test Your Connection
+## **✅ Step 4: Test Your Connection**
 
 ```bash
 ssh -T git@github.com
 ```
 
-You should see:
+*You should see:*
 
 ```
 Hi your-username! You've successfully authenticated, but GitHub does not provide shell access.
@@ -122,7 +122,7 @@ If you see permission denied — make sure your public key was added correctly.
 
 
 
-## 🌐 Step 5: Use SSH with Remote Servers
+## **🌐 Step 5: Use SSH with Remote Servers**
 
 To connect to a remote server:
 
@@ -153,7 +153,7 @@ ssh myserver
 
 
 
-## 💡 Bonus: Manage Multiple SSH Keys
+## 💡 *Bonus:* Manage Multiple SSH Keys
 
 Use `~/.ssh/config` to manage multiple GitHub accounts or servers:
 
@@ -179,7 +179,7 @@ git clone git@github-work:your-org/your-repo.git
 
 
 
-## 🔒 Security Tips
+## **🔒 Security Tips**
 
 - Never share your **private key** (`id_ed25519`)  
 - Use **strong passphrases**  

@@ -9,13 +9,13 @@ readingTime: 1
 featured: false
 ---
 
-# Effective Code Debugging Techniques
+# **Effective Code Debugging Techniques**
 
 Debugging is not just about fixing bugs — it's a process of understanding how and why code behaves the way it does. In this post, we'll explore tried-and-true techniques to debug your code more effectively, save time, and maintain your sanity.
 
 
 
-## 🔍 1. Reproduce the Bug Consistently
+## **🔍 1. Reproduce the Bug Consistently**
 
 Before fixing anything, ensure you can **reliably reproduce** the bug. Document the input, steps, environment, and expected vs. actual outcome. This is crucial in both individual work and team debugging.
 
@@ -23,7 +23,7 @@ Before fixing anything, ensure you can **reliably reproduce** the bug. Document 
 
 
 
-## 🧭 2. Read the Error Message Carefully
+## **🧭 2. Read the Error Message Carefully**
 
 Most developers skip the most obvious clues — error messages. Don't just skim them.
 
@@ -32,7 +32,7 @@ Most developers skip the most obvious clues — error messages. Don't just skim 
 
 
 
-## 🛠️ 3. Use a Step Debugger
+## **🛠️ 3. Use a Step Debugger**
 
 Instead of relying solely on `console.log`, use a step debugger:
 
@@ -42,7 +42,7 @@ Instead of relying solely on `console.log`, use a step debugger:
 
 
 
-## 🧾 4. Isolate the Problem
+## **🧾 4. Isolate the Problem**
 
 Try to **minimize the code** to the smallest possible example that still produces the bug. This is known as a **"minimal reproducible example"**.
 
@@ -54,7 +54,7 @@ It forces you to:
 
 
 
-## 🧪 5. Write Tests (Yes, Even During Debugging)
+## **🧪 5. Write Tests (Yes, Even During Debugging)**
 
 If the bug was not covered by a test, now is the time to write one. This helps:
 
@@ -70,19 +70,17 @@ test('should correctly format date', () => {
 });
 ```
 
-🧠 6. Explain the Bug Out Loud (Rubber Duck Debugging)
+## **🧠 6. Explain the Bug Out Loud (Rubber Duck Debugging)**
 Try to explain the code and the bug out loud as if you were talking to a rubber duck. Often, articulating your logic helps expose flawed assumptions.
 
-🧑‍🤝‍🧑 7. Ask for Help — But Be Clear
+## **🧑‍🤝‍🧑 7. Ask for Help — But Be Clear**
 When stuck:
 
-Share what you tried, what didn't work, and code samples.
+- Share what you tried, what didn't work, and code samples.
+- Use Stack Overflow guidelines.
+- Use tools like Carbon or GitHub gists to format code snippets.
 
-Use Stack Overflow guidelines.
-
-Use tools like Carbon or GitHub gists to format code snippets.
-
-💡 8. Use Logs Wisely
+## **💡 8. Use Logs Wisely**
 Rather than dumping everything with console.log, structure your logs:
 
 ```ts
@@ -91,7 +89,7 @@ console.log('[UserService] fetchUserById', { userId });
 
 And remove unnecessary logs once done — keep your codebase clean.
 
-🔁 9. Version Control is Your Friend
+## **🔁 9. Version Control is Your Friend**
 Use Git branches for experimentation and debugging. It allows you to:
 
 Quickly test changes.
@@ -100,8 +98,9 @@ Revert or cherry-pick fixes.
 
 Collaborate without fear of breaking things.
 
-🧰 10. Know Your Tools
-Master your debugging tools:
+## **🧰 10. Know Your Tools**
+
+*Master your debugging tools:*
 
 Chrome DevTools
 
@@ -113,10 +112,10 @@ Logging libraries (e.g., Winston, Bunyan)
 
 Familiarity with these can dramatically reduce debugging time.
 
-🚀 Conclusion
+*🚀 Conclusion*
 Debugging is a skill that improves with practice and reflection. By following a structured approach and using the right tools, you can turn even the most frustrating bugs into learning opportunities.
 
 ## Happy debugging! 🐞
 
-Written by: [andev0x]
-Last updated: July 1, 2025
+**Written by:** [andev0x](https://github.com/andev0x)  
+**Last updated:** July 1, 2025  

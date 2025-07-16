@@ -79,16 +79,32 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
           </header>
 
           {/* Post Content */}
-          <div className="prose prose-terminal max-w-none">
+          <div
+            className="prose prose-invert max-w-none
+              prose-h1:text-4xl
+              prose-h2:text-3xl
+              prose-h3:text-2xl
+              prose-headings:font-vt323
+              prose-headings:text-terminal-green
+              prose-headings:bg-transparent
+              prose-p:text-base
+              prose-p:bg-transparent
+              prose-code:bg-transparent
+            "
+          >
             <ReactMarkdown
               remarkPlugins={[remarkMath, remarkGfm]}
               rehypePlugins={[rehypeKatex]}
               components={{
                 a: (props) => (
-                  <a {...props} className="text-terminal-green underline hover:text-terminal-green-bright transition-colors" target="_blank" rel="noopener noreferrer" />
+                  <a
+                    {...props}
+                    className="text-[#88FFCC] underline underline-offset-4 hover:text-[#A2FFD8] transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
                 ),
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                code({inline, className, children, ...props}: any) {
+                code({ inline, className, children, ...props }: any) {
                   const match = /language-(\w+)/.exec(className || '');
                   return !inline && match ? (
                     <SyntaxHighlighter
@@ -98,8 +114,10 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
                       customStyle={{
                         borderRadius: '0.5rem',
                         margin: '1.5rem 0',
-                        fontSize: '1rem',
-                        background: 'none',
+                        fontSize: '0.9rem',
+                        padding: '1rem',
+                        background: 'transparent',
+                        color: '#F8F8F2',
                       }}
                       {...props}
                     >
@@ -107,18 +125,25 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
                     </SyntaxHighlighter>
                   ) : (
                     <code
-                      className="bg-code-bg text-code-text px-2 py-1 rounded font-mono text-sm border border-code-border"
+                      className="bg-transparent text-[#FFD580] px-2 py-1 rounded font-mono text-[0.95rem] border border-[#333]"
                       {...props}
                     >
                       {children}
                     </code>
                   );
                 },
+                em: ({ node, ...props }) => (
+                  <em className="text-[#FFC57A] italic" {...props} />
+                ),
+                strong: ({ node, ...props }) => (
+                  <strong className="text-[#FFDF80] font-bold" {...props} />
+                ),
               }}
             >
               {post.content}
             </ReactMarkdown>
           </div>
+
 
           {/* Rating & Comments Section */}
           <section className="mt-12 mb-8">

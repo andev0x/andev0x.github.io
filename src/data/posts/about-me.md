@@ -35,7 +35,7 @@ While my heart is in the backend, I’m fully comfortable moving across the stac
 - **Languages:** Go, Rust, Swift, Python, Dart  
 - **Frontend:** React, TypeScript  
 - **Tooling:** Vite, Tailwind CSS, Neovim, Ghostty  
-- **Philosophy:** *“The simpler the better — optimize until it can’t be optimized anymore.”*
+- **Philosophy:** “The simpler the better — optimize until it can’t be optimized anymore.”
 
 
 
@@ -62,3 +62,6 @@ I'm always building, learning, and refining.
 
 Thanks for stopping by! 🙌  
 Feel free to explore my projects, give feedback, or just say hi.
+
+**Written by:** [andev0x](https://github.com/andev0x)  
+**Last updated:** July 1, 2025  
