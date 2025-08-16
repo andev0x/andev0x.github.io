@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 
 const asciiArt = `
 
-██╗              █████╗ ███╗   ██╗      
-╚██╗            ██╔══██╗████╗  ██║      
- ╚██╗           ███████║██╔██╗ ██║      
- ██╔╝           ██╔══██║██║╚██╗██║      
+██╗              █████╗ ███╗   ██╗
+╚██╗            ██╔══██╗████╗  ██║
+ ╚██╗           ███████║██╔██╗ ██║
+ ██╔╝           ██╔══██║██║╚██╗██║
 ██╔╝███████╗    ██║  ██║██║ ╚████║██╗██╗
 ╚═╝ ╚══════╝    ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝
 
@@ -35,7 +35,7 @@ function useTypingEffect(text: string, speed = 30) {
 }
 
 export const TerminalAboutMe: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
-  const intro = ">_ Hi, I'm anvndev! Welcome to my terminal. I'm a developer passionate about building cool things with code.";
+  const intro = ">_ Hi, I'm Andeph Nguyen! Welcome to my terminal. I'm a developer passionate about building cool things with code.";
   const typedIntro = useTypingEffect(intro, 25);
 
   return (
@@ -83,4 +83,4 @@ export const TerminalAboutMe: React.FC<{ onClose?: () => void }> = ({ onClose })
       </div>
     </div>
   );
-}; 
+};
