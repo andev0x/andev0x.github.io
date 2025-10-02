@@ -27,7 +27,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                 : 'text-terminal-green hover-glow border border-terminal-green/50'
             }`}
           >
-            all
+            LATEST
           </button>
           
           {categories.map((category) => (

@@ -28,23 +28,20 @@ function App() {
 
   // Filter posts by category
   const filteredPosts = useMemo(() => {
-    let posts = searchResults.map(result => result.item);
+    let posts = searchResults;
     if (selectedCategory) {
-      posts = posts.filter(post => post.categories.includes(selectedCategory));
+      posts = posts.filter(result => result.item.category === selectedCategory);
     }
-    return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return posts.sort((a, b) => new Date(b.item.date).getTime() - new Date(a.item.date).getTime());
   }, [searchResults, selectedCategory]);
 
-  // Get unique categories, excluding special ones
+  // Get unique categories
   const categories = useMemo(() => {
-    const SPECIAL_CATEGORIES = ["About", "Projects"];
-    const allCategories = blogPosts.flatMap(post => post.categories);
-    return Array.from(new Set(allCategories)).filter(cat => !SPECIAL_CATEGORIES.includes(cat));
+    const allCategories = blogPosts.map(post => post.category);
+    return Array.from(new Set(allCategories));
   }, []);
 
-  // Get special pages
-  const aboutPost = blogPosts.find(post => post.categories.includes("About"));
-  const projectsPost = blogPosts.find(post => post.categories.includes("Projects"));
+  
 
   // Keyboard navigation
   useKeyboard({
@@ -98,27 +95,7 @@ function App() {
       )}
 
       <main className="container mx-auto px-4 py-8">
-        {/* Special navigation for About and Projects */}
-        {!selectedPost && (
-          <div className="flex gap-4 mb-8">
-            {aboutPost && (
-              <button
-                className="px-4 py-2 rounded bg-terminal-green/10 border border-terminal-green/40 text-terminal-green font-vt323 hover:bg-terminal-green/20 transition"
-                onClick={() => setSelectedPost(aboutPost)}
-              >
-                About Me
-              </button>
-            )}
-            {projectsPost && (
-              <button
-                className="px-4 py-2 rounded bg-terminal-green/10 border border-terminal-green/40 text-terminal-green font-vt323 hover:bg-terminal-green/20 transition"
-                onClick={() => setSelectedPost(projectsPost)}
-              >
-                Projects
-              </button>
-            )}
-          </div>
-        )}
+        
         {selectedPost ? (
           <PostDetail post={selectedPost} onBack={handleBackToList} />
         ) : (
@@ -127,12 +104,13 @@ function App() {
               <div className="text-terminal-green/60 terminal-accent text-sm mb-2">
                 {searchTerm && `Search results for "${searchTerm}"`}
                 {selectedCategory && `Category: ${selectedCategory}`}
-                {!searchTerm && !selectedCategory && 'All posts'}
-                {' '}
-                ({filteredPosts.length} {filteredPosts.length === 1 ? 'post' : 'posts'})
+                {!searchTerm && !selectedCategory && 'Latest posts'}
               </div>
             </div>
-            <PostList posts={searchResults} onPostClick={handlePostClick} />
+            <PostList
+              posts={filteredPosts}
+              onPostClick={handlePostClick}
+            />
           </>
         )}
       </main>
