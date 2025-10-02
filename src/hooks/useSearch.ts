@@ -4,8 +4,10 @@ import { BlogPost } from '../types';
 
 const fuseOptions = {
   keys: ['title', 'content', 'tags', 'category'],
-  threshold: 0.3,
+  threshold: 0.4, // Looser threshold
   includeScore: true,
+  includeMatches: true, // Include match details
+  minMatchCharLength: 2,
 };
 
 export const useSearch = (posts: BlogPost[]) => {
@@ -16,9 +18,11 @@ export const useSearch = (posts: BlogPost[]) => {
 
   const searchResults = useMemo(() => {
     if (!searchTerm.trim()) {
-      return posts;
+      // When no search term, return all posts without matches
+      return posts.map(post => ({ item: post, matches: [] }));
     }
-    return fuse.search(searchTerm).map(result => result.item);
+    // When searching, return Fuse search results
+    return fuse.search(searchTerm);
   }, [searchTerm, fuse, posts]);
 
   const activateSearch = () => {

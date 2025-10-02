@@ -31,7 +31,7 @@ export async function fetchComments(postId: string) {
       if (response.ok) {
         const comments = await response.json();
         // Map backend fields to frontend fields
-        return comments.map((c: any) => ({
+        return comments.map((c: { id: string; postId: string; post_id: string; author: string; name: string; content: string; createdAt: string; created_at: string; timestamp: string; }) => ({
           id: c.id,
           postId: c.postId || c.post_id || postId,
           author: c.author || c.name,
@@ -118,13 +118,13 @@ export async function fetchRatings(postId: string) {
         // If backend returns an array, aggregate; if object, map fields
         if (Array.isArray(ratings)) {
           // Legacy: array of ratings
-          const values = ratings.map((r: any) => r.value || r.rating || 0);
+          const values = ratings.map((r: { value: number; rating: number; }) => r.value || r.rating || 0);
           const average = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
           return {
             postId,
             average,
             count: values.length,
-            ratings: ratings.map((r: any) => ({
+            ratings: ratings.map((r: { id: string; value: number; rating: number; timestamp: string; createdAt: string; created_at: string; }) => ({
               id: r.id,
               value: r.value || r.rating,
               timestamp: r.timestamp || r.createdAt || r.created_at,
@@ -136,7 +136,7 @@ export async function fetchRatings(postId: string) {
             postId,
             average: ratings.average ?? 0,
             count: ratings.total ?? ratings.count ?? 0,
-            ratings: (ratings.ratings || []).map((r: any) => ({
+            ratings: (ratings.ratings || []).map((r: { id: string; value: number; rating: number; timestamp: string; createdAt: string; created_at: string; }) => ({
               id: r.id,
               value: r.value || r.rating,
               timestamp: r.timestamp || r.createdAt || r.created_at,

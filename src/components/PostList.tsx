@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { BlogPost } from '../types';
+import { SearchResult } from '../types';
 import { PostCard } from './PostCard';
+import { BlogPost } from '../types';
 
 interface PostListProps {
-  posts: BlogPost[];
+  posts: SearchResult[];
   onPostClick: (post: BlogPost) => void;
 }
 
@@ -27,13 +28,13 @@ export const PostList: React.FC<PostListProps> = ({ posts, onPostClick }) => {
   return (
     <>
       <div className="grid gap-6 md:gap-8">
-        {visiblePosts.map((post, index) => (
+        {visiblePosts.map((result, index) => (
           <div
-            key={post.id}
+            key={result.item.id}
             className="animate-slide-up"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <PostCard post={post} onClick={() => onPostClick(post)} />
+            <PostCard post={result.item} matches={result.matches} onClick={() => onPostClick(result.item)} />
           </div>
         ))}
       </div>

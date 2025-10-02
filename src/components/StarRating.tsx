@@ -19,7 +19,7 @@ export const StarRating: React.FC<StarRatingProps> = ({ postId }) => {
         const ratings = await fetchRatings(postId);
         // Type guard: if ratings is an array, aggregate manually
         if (Array.isArray(ratings)) {
-          const values = ratings.map((r: any) => r.value || r.rating || 0);
+          const values = ratings.map((r: { value?: number; rating?: number }) => r.value || r.rating || 0);
           const avg = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
           setAverageRating(avg);
           setTotalRatings(values.length);
@@ -43,7 +43,7 @@ export const StarRating: React.FC<StarRatingProps> = ({ postId }) => {
       // Refresh ratings after posting
       const ratings = await fetchRatings(postId);
       if (Array.isArray(ratings)) {
-        const values = ratings.map((r: any) => r.value || r.rating || 0);
+        const values = ratings.map((r: { value?: number; rating?: number }) => r.value || r.rating || 0);
         const avg = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
         setAverageRating(avg);
         setTotalRatings(values.length);

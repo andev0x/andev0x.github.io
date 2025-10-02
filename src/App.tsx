@@ -28,7 +28,7 @@ function App() {
 
   // Filter posts by category
   const filteredPosts = useMemo(() => {
-    let posts = searchResults;
+    let posts = searchResults.map(result => result.item);
     if (selectedCategory) {
       posts = posts.filter(post => post.categories.includes(selectedCategory));
     }
@@ -132,7 +132,7 @@ function App() {
                 ({filteredPosts.length} {filteredPosts.length === 1 ? 'post' : 'posts'})
               </div>
             </div>
-            <PostList posts={filteredPosts} onPostClick={handlePostClick} />
+            <PostList posts={searchResults} onPostClick={handlePostClick} />
           </>
         )}
       </main>

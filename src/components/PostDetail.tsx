@@ -9,7 +9,6 @@ import remarkGfm from 'remark-gfm';
 import 'katex/dist/katex.min.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { StarRating } from './StarRating';
 import { CommentSection } from './CommentSection';
 
 interface PostDetailProps {
@@ -96,7 +95,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
               remarkPlugins={[remarkMath, remarkGfm]}
               rehypePlugins={[rehypeKatex]}
               components={{
-                a: (props) => (
+                a: ({ ...props }) => (
                   <a
                     {...props}
                     className="text-[#88FFCC] underline underline-offset-4 hover:text-[#A2FFD8] transition-colors"
@@ -104,7 +103,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
                     rel="noopener noreferrer"
                   />
                 ),
-                code({ inline, className, children, ...props }: any) {
+                code({ inline, className, children, ...props }: { inline?: boolean; className?: string; children?: React.ReactNode }) {
                   const match = /language-(\w+)/.exec(className || '');
                   return !inline && match ? (
                     <SyntaxHighlighter
@@ -132,10 +131,10 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
                     </code>
                   );
                 },
-                em: ({ node, ...props }) => (
+                em: ({ ...props }) => (
                   <em className="text-[#FFC57A] italic" {...props} />
                 ),
-                strong: ({ node, ...props }) => (
+                strong: ({ ...props }) => (
                   <strong className="text-[#FFDF80] font-bold" {...props} />
                 ),
               }}

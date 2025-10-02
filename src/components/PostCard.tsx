@@ -2,13 +2,50 @@ import React from 'react';
 import { BlogPost } from '../types';
 import { format } from 'date-fns';
 import { Clock, Tag } from 'lucide-react';
+import Fuse from 'fuse.js';
 
 interface PostCardProps {
   post: BlogPost;
+  matches?: Fuse.FuseResultMatch[];
   onClick: () => void;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
+const highlight = (text: string, matches?: Fuse.FuseResultMatch[], key?: string) => {
+  if (!matches || !key) {
+    return text;
+  }
+
+  const relevantMatches = matches.filter(m => m.key === key);
+  if (relevantMatches.length === 0) {
+    return text;
+  }
+
+  const result: (string | JSX.Element)[] = [];
+  let lastIndex = 0;
+
+  relevantMatches.forEach(match => {
+    match.indices.forEach(([start, end]) => {
+      if (start > lastIndex) {
+        result.push(text.substring(lastIndex, start));
+      }
+      result.push(
+        <span key={`${start}-${end}`} className="bg-terminal-green text-terminal-black">
+          {text.substring(start, end + 1)}
+        </span>
+      );
+      lastIndex = end + 1;
+    });
+  });
+
+
+  if (lastIndex < text.length) {
+    result.push(text.substring(lastIndex));
+  }
+
+  return result;
+};
+
+export const PostCard: React.FC<PostCardProps> = ({ post, matches, onClick }) => {
   return (
     <article
       onClick={onClick}
@@ -30,11 +67,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       </div>
       
       <h2 className="text-xl md:text-2xl font-vt323 text-terminal-green mb-3 group-hover:animate-glow">
-        {post.title}
+        {highlight(post.title, matches, 'title')}
       </h2>
       
       <p className="text-terminal-green/80 font-vt323 text-lg mb-4 line-clamp-3">
-        {post.excerpt}
+        {highlight(post.excerpt, matches, 'content')}
       </p>
       
       <div className="flex flex-wrap gap-2 mb-3">

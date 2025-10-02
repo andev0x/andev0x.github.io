@@ -1,3 +1,5 @@
+import Fuse from 'fuse.js';
+
 export interface BlogPost {
   id: string;
   title: string;
@@ -13,8 +15,10 @@ export interface BlogPost {
 
 export interface SearchResult {
   item: BlogPost;
-  score: number;
+  score?: number;
+  matches?: Fuse.FuseResultMatch[];
 }
+
 
 export interface KeyboardShortcut {
   key: string;
