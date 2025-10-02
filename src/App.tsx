@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { Header } from './components/Header';
-import { Navigation } from './components/Navigation';
 import { PostList } from './components/PostList';
 import { PostDetail } from './components/PostDetail';
 import { Footer } from './components/Footer';
@@ -9,12 +8,14 @@ import { useSearch } from './hooks/useSearch';
 import { blogPosts } from './data/posts';
 import { BlogPost } from './types';
 import { TerminalAboutMe } from './components/TerminalAboutMe';
+import CategoryBar from './components/CategoryBar'; // Import CategoryBar
+import NavigationHint from './components/NavigationHint'; // Import NavigationHint
 
 console.log('Loaded blog posts:', blogPosts);
 
 function App() {
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null); // Renamed for clarity
   const [showAboutMe, setShowAboutMe] = useState(false);
 
   const {
@@ -29,17 +30,17 @@ function App() {
   // Filter posts by category
   const filteredPosts = useMemo(() => {
     let posts = searchResults;
-    if (selectedCategory) {
-      posts = posts.filter(result => result.item.category === selectedCategory);
+    if (activeCategory) {
+      posts = posts.filter(result => result.item.categories.includes(activeCategory));
     }
     return posts.sort((a, b) => new Date(b.item.date).getTime() - new Date(a.item.date).getTime());
-  }, [searchResults, selectedCategory]);
+  }, [searchResults, activeCategory]);
 
-  // Get unique categories
-  const categories = useMemo(() => {
-    const allCategories = blogPosts.map(post => post.category);
-    return Array.from(new Set(allCategories));
-  }, []);
+  // No longer need to compute categories here, CategoryBar does it internally
+  // const categories = useMemo(() => {
+  //   const allCategories = blogPosts.flatMap(post => post.categories);
+  //   return Array.from(new Set(allCategories));
+  // }, []);
 
   
 
@@ -87,11 +88,13 @@ function App() {
       />
 
       {!selectedPost && (
-        <Navigation
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-        />
+        <>
+          <CategoryBar
+            onSelectCategory={setActiveCategory}
+            activeCategory={activeCategory}
+          />
+          <NavigationHint />
+        </>
       )}
 
       <main className="container mx-auto px-4 py-8">
@@ -103,8 +106,8 @@ function App() {
             <div className="mb-8">
               <div className="text-terminal-green/60 terminal-accent text-sm mb-2">
                 {searchTerm && `Search results for "${searchTerm}"`}
-                {selectedCategory && `Category: ${selectedCategory}`}
-                {!searchTerm && !selectedCategory && 'Latest posts'}
+                {activeCategory && `Category: ${activeCategory}`}
+                {!searchTerm && !activeCategory && 'Latest posts'}
               </div>
             </div>
             <PostList
