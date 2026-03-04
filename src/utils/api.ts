@@ -1,7 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://go-blog-production-e388.up.railway.app/api/v1';
 
 // Mock data storage (fallback when backend is unavailable)
-const mockComments: Record<string, Array<{ id: string; author: string; content: string; timestamp: string }>> = {};
+const mockComments: Record<string, Array<{ id: string; postId: string; author: string; content: string; createdAt: string; rating?: number }>> = {};
 const mockRatings: Record<string, Array<{ id: string; value: number; timestamp: string }>> = {};
 
 // Helper to generate IDs
@@ -31,12 +31,13 @@ export async function fetchComments(postId: string) {
       if (response.ok) {
         const comments = await response.json();
         // Map backend fields to frontend fields
-        return comments.map((c: { id: string; postId: string; post_id: string; author: string; name: string; content: string; createdAt: string; created_at: string; timestamp: string; }) => ({
-          id: c.id,
+        return comments.map((c: any) => ({
+          id: String(c.id),
           postId: c.postId || c.post_id || postId,
           author: c.author || c.name,
           content: c.content,
-          createdAt: c.createdAt || c.created_at || c.timestamp,
+          createdAt: c.createdAt || c.created_at || c.timestamp || new Date().toISOString(),
+          rating: c.rating,
         }));
       }
     } catch (error) {
@@ -71,11 +72,11 @@ export async function postComment(postId: string, comment: { author: string; con
         const newComment = await response.json();
         // Map backend fields to frontend fields
         return {
-          id: newComment.id,
-          postId: newComment.postId || newComment.post_id || postId,
+          id: String(newComment.id),
+          postId: newComment.postId || postId,
           author: newComment.author || newComment.name,
           content: newComment.content,
-          createdAt: newComment.createdAt || newComment.created_at || newComment.timestamp,
+          createdAt: newComment.createdAt || newComment.created_at || newComment.timestamp || new Date().toISOString(),
           rating: newComment.rating,
         };
       } else {
@@ -92,8 +93,11 @@ export async function postComment(postId: string, comment: { author: string; con
   
   const newComment = {
     id: generateId(),
-    ...comment,
-    timestamp: new Date().toISOString()
+    postId: postId,
+    author: comment.author,
+    content: comment.content,
+    createdAt: new Date().toISOString(),
+    rating: comment.rating,
   };
   
   if (!mockComments[postId]) {

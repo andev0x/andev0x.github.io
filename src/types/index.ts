@@ -1,5 +1,3 @@
-import Fuse from 'fuse.js';
-
 export interface BlogPost {
   id: string;
   title: string;
@@ -16,7 +14,12 @@ export interface BlogPost {
 export interface SearchResult {
   item: BlogPost;
   score?: number;
-  matches?: Fuse.FuseResultMatch[];
+  matches?: Array<{
+    indices: readonly [number, number][];
+    key?: string;
+    refIndex?: number;
+    value?: string;
+  }>;
 }
 
 
