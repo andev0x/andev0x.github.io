@@ -116,11 +116,11 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
                   <span className="font-vt323 text-terminal-green text-base mr-2">{comment.author}</span>
                   <span className="text-terminal-green/40 text-xs mr-2">{new Date(comment.createdAt).toLocaleString()}</span>
                   {/* Show rating if present */}
-                  {comment.rating && (
+                  {comment.rating != null && comment.rating > 0 && (
                     <span className="ml-2 text-terminal-green/80 text-lg">
                       {[1,2,3,4,5].map(star => (
                         <span key={star}>
-                          {comment.rating >= star ? '★' : '☆'}
+                          {comment.rating && comment.rating >= star ? '★' : '☆'}
                         </span>
                       ))}
                     </span>
