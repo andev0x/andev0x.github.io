@@ -6,9 +6,16 @@ import { BlogPost } from '../types';
 interface PostListProps {
   posts: SearchResult[];
   onPostClick: (post: BlogPost) => void;
+  toggleMode?: boolean;
+  selectedIndex?: number;
 }
 
-export const PostList: React.FC<PostListProps> = ({ posts, onPostClick }) => {
+export const PostList: React.FC<PostListProps> = ({ 
+  posts, 
+  onPostClick, 
+  toggleMode = false, 
+  selectedIndex = 0 
+}) => {
   const [showAll, setShowAll] = useState(false);
   const visiblePosts = showAll ? posts : posts.slice(0, 3);
 
@@ -31,7 +38,12 @@ export const PostList: React.FC<PostListProps> = ({ posts, onPostClick }) => {
         {visiblePosts.map((result, index) => (
           <div
             key={result.item.id}
-            className="animate-slide-up"
+            data-post-index={index}
+            className={`animate-slide-up ${
+              toggleMode && index === selectedIndex 
+                ? 'ring-2 ring-terminal-green ring-opacity-60 bg-terminal-green/10 rounded-lg p-2' 
+                : ''
+            }`}
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <PostCard post={result.item} matches={result.matches} onClick={() => onPostClick(result.item)} />
