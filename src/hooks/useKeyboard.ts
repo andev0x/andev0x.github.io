@@ -7,6 +7,11 @@ interface UseKeyboardProps {
   onScrollTop?: () => void;
   onScrollBottom?: () => void;
   onEscape?: () => void;
+  onToggleMode?: () => void;
+  onToggleCategory?: () => void;
+  onNextPost?: () => void;
+  onPrevPost?: () => void;
+  onSelectPost?: () => void;
 }
 
 export const useKeyboard = ({
@@ -16,6 +21,11 @@ export const useKeyboard = ({
   onScrollTop,
   onScrollBottom,
   onEscape,
+  onToggleMode,
+  onToggleCategory,
+  onNextPost,
+  onPrevPost,
+  onSelectPost,
 }: UseKeyboardProps) => {
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     // Don't handle keyboard shortcuts when typing in inputs
@@ -31,13 +41,45 @@ export const useKeyboard = ({
         event.preventDefault();
         onSearch?.();
         break;
+      case 'c':
+        event.preventDefault();
+        onToggleCategory?.();
+        break;
+      case 't':
+        event.preventDefault();
+        onToggleMode?.();
+        break;
+      case 'Tab':
+        if (onNextPost || onPrevPost) {
+          event.preventDefault();
+          if (event.shiftKey) {
+            onPrevPost?.();
+          } else {
+            onNextPost?.();
+          }
+        }
+        break;
+      case 'Enter':
+        if (onSelectPost) {
+          event.preventDefault();
+          onSelectPost?.();
+        }
+        break;
       case 'j':
         event.preventDefault();
-        onScrollDown?.();
+        if (onNextPost) {
+          onNextPost?.();
+        } else {
+          onScrollDown?.();
+        }
         break;
       case 'k':
         event.preventDefault();
-        onScrollUp?.();
+        if (onPrevPost) {
+          onPrevPost?.();
+        } else {
+          onScrollUp?.();
+        }
         break;
       case 'g':
         if (event.shiftKey) {
@@ -54,7 +96,7 @@ export const useKeyboard = ({
         onEscape?.();
         break;
     }
-  }, [onSearch, onScrollDown, onScrollUp, onScrollTop, onScrollBottom, onEscape]);
+  }, [onSearch, onScrollDown, onScrollUp, onScrollTop, onScrollBottom, onEscape, onToggleMode, onToggleCategory, onNextPost, onPrevPost, onSelectPost]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
