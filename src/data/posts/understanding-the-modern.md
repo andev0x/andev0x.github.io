@@ -339,5 +339,6 @@ If you're learning backend development or DevOps, mastering this architecture wi
 
 ---
 
-**Written by:** [andev0x](https://github.com/andev0x)
-**Last updated:** March 8, 2026
+🟢 **Written by**: [andev0x](https://github.com/andev0x)
+
+> Last updated: March 8, 2026
