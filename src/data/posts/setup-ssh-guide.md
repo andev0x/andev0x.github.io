@@ -9,29 +9,25 @@ readingTime: 4
 featured: true
 ---
 
-# 🔐 **How to Set Up SSH for GitHub and Remote Servers**
+# How to Set Up SSH for GitHub and Remote Servers
 
 SSH (Secure Shell) is an essential tool for secure communication between your machine and remote services like GitHub, servers, and containers.
 
 **In this guide, you'll learn:**
 
-- How to generate SSH keys  
-- How to add them to GitHub  
-- How to use them with remote servers  
-- How to manage multiple keys  
+- How to generate SSH keys
+- How to add them to GitHub
+- How to use them with remote servers
+- How to manage multiple keys
 
+## Prerequisites
 
+- A terminal (macOS/Linux) or Git Bash (Windows)
+- Git installed
+- A GitHub account (for Git usage)
+- Access to a remote server (optional)
 
-## **🧰 Prerequisites**
-
-- A terminal (macOS/Linux) or Git Bash (Windows)  
-- Git installed  
-- A GitHub account (for Git usage)  
-- Access to a remote server (optional)  
-
-
-
-## *🗝️ Step 1: Generate SSH Key Pair*
+## Step 1: Generate SSH Key Pair
 
 Open your terminal and run:
 
@@ -39,11 +35,11 @@ Open your terminal and run:
 ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
-> Use `-t rsa -b 4096` if your system doesn’t support `ed25519`.  
+> Use `-t rsa -b 4096` if your system doesn’t support `ed25519`.
 
 You'll see:
 
-```
+```text
 Enter file in which to save the key (/home/you/.ssh/id_ed25519):
 ```
 
@@ -51,15 +47,13 @@ Press **Enter** to accept the default path or type a custom filename.
 
 Next:
 
-```
+```text
 Enter passphrase (empty for no passphrase):
 ```
 
-> *💡 Use a strong passphrase or leave it empty for convenience (less secure).*
+Use a strong passphrase or leave it empty for convenience (less secure).
 
-
-
-## **📂 Step 2: Add SSH Key to Your SSH Agent**
+## Step 2: Add SSH Key to Your SSH Agent
 
 Start the SSH agent:
 
@@ -79,9 +73,7 @@ If you used a custom filename:
 ssh-add ~/.ssh/your_custom_key
 ```
 
-
-
-## **🖥️ Step 3: Add Public Key to GitHub**
+## Step 3: Add Public Key to GitHub
 
 Copy your public key to clipboard:
 
@@ -98,31 +90,27 @@ Copy your public key to clipboard:
   clip < ~/.ssh/id_ed25519.pub
   ```
 
-*Then:*
+Then:
 
-1. Go to **GitHub → Settings → SSH and GPG keys**  
-2. Click **"New SSH key"**  
-3. Paste the key and give it a title  
+1. Go to **GitHub → Settings → SSH and GPG keys**
+2. Click **"New SSH key"**
+3. Paste the key and give it a title
 
-
-
-## **✅ Step 4: Test Your Connection**
+## Step 4: Test Your Connection
 
 ```bash
 ssh -T git@github.com
 ```
 
-*You should see:*
+You should see:
 
-```
+```text
 Hi your-username! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
 If you see permission denied — make sure your public key was added correctly.
 
-
-
-## **🌐 Step 5: Use SSH with Remote Servers**
+## Step 5: Use SSH with Remote Servers
 
 To connect to a remote server:
 
@@ -151,9 +139,7 @@ Then connect with:
 ssh myserver
 ```
 
-
-
-## 💡 *Bonus:* Manage Multiple SSH Keys
+## Bonus: Manage Multiple SSH Keys
 
 Use `~/.ssh/config` to manage multiple GitHub accounts or servers:
 
@@ -177,26 +163,22 @@ Then clone like this:
 git clone git@github-work:your-org/your-repo.git
 ```
 
+## Security Tips
 
+- Never share your **private key** (`id_ed25519`)
+- Use **strong passphrases**
+- Regularly **rotate your keys**
+- Store backups securely (e.g., encrypted cloud storage or password manager)
 
-## **🔒 Security Tips**
+## Recap
 
-- Never share your **private key** (`id_ed25519`)  
-- Use **strong passphrases**  
-- Regularly **rotate your keys**  
-- Store backups securely (e.g., encrypted cloud storage or password manager)  
+1. Generate SSH key → `ssh-keygen`
+2. Add to SSH agent → `ssh-add`
+3. Copy and paste public key to GitHub or remote server
+4. Test connection → `ssh -T git@github.com`
+5. Optional: Configure `~/.ssh/config` for multi-key management
 
-
-
-
-1. Generate SSH key → `ssh-keygen`  
-2. Add to SSH agent → `ssh-add`  
-3. Copy and paste public key to GitHub or remote server  
-4. Test connection → `ssh -T git@github.com`  
-5. Optional: Configure `~/.ssh/config` for multi-key management  
-
-
+---
 
 **Written by:** [andev0x](https://github.com/andev0x)  
-**Last updated:** July 3, 2025  
-
+**Last updated:** July 3, 2025

@@ -13,7 +13,6 @@ featured: true
 
 > This article introduces Guts — a terminal-native data explorer built for engineers who want speed, clarity, and control when working with structured data across local files and remote databases.
 
-
 ## The Problem — Data Exploration Should Be Faster
 
 As engineers, we constantly interact with data:
@@ -32,7 +31,6 @@ I kept asking myself:
 
 > Why isn’t there a **fast, keyboard-first, terminal-native tool** that feels as fluid as a text editor?
 
-
 ## The Idea Behind Guts
 
 That question led to building **Guts**.
@@ -48,14 +46,14 @@ It’s not just about viewing data.
 
 It’s about **interacting with data efficiently**.
 
-
-##  Designed for Real Engineering Workflows
+## Designed for Real Engineering Workflows
 
 Guts isn’t a toy tool — it’s built for real workflows.
 
 It supports:
 
 ### Data Sources
+
 - Local files: CSV, JSON, SQLite
 - Remote databases: PostgreSQL, MySQL, MongoDB
 
@@ -64,7 +62,6 @@ This means you can:
 - Inspect local datasets instantly
 - Query production-like databases
 - Debug issues without switching tools
-
 
 ## Navigation — Inspired by Vim
 
@@ -81,9 +78,8 @@ So Guts uses familiar navigation patterns:
 
 If you use Neovim, this feels natural immediately.
 
-No learning curve.
-No mouse required.
-
+- No learning curve
+- No mouse required
 
 ## Handling Large Data — Without Slowing Down
 
@@ -103,8 +99,7 @@ You can scroll through massive datasets smoothly without:
 
 Performance isn’t a feature — it’s a requirement.
 
-
-##  Search, Filtering, and Query Power
+## Search, Filtering, and Query Power
 
 Exploration is not just about viewing — it’s about **finding**.
 
@@ -124,8 +119,7 @@ This allows you to:
 - Iterate on queries quickly
 - Stay in a tight feedback loop
 
-
-##  Data Operations — More Than Just Viewing
+## Data Operations — More Than Just Viewing
 
 Guts goes beyond passive exploration.
 
@@ -143,7 +137,6 @@ Even small details matter:
 
 These are the things that save time every day.
 
-
 ## Customization — Your Terminal, Your Rules
 
 Every developer has a different workflow.
@@ -151,6 +144,7 @@ Every developer has a different workflow.
 Guts embraces that.
 
 ### Theming
+
 - Built-in themes:
   - Nord
   - Gruvbox
@@ -160,15 +154,15 @@ Guts embraces that.
 - Automatic ANSI fallback
 
 ### Keybindings
+
 - Fully configurable
 - Vim-style by default
 - Adaptable to your preferences
 
-Minimal by default.
-Flexible when needed.
+- Minimal by default
+- Flexible when needed
 
-
-##  Built with Rust — For Performance and Reliability
+## Built with Rust — For Performance and Reliability
 
 Guts is written in **Rust**.
 
@@ -184,17 +178,19 @@ It ensures:
 - Predictable behavior
 - Long-term maintainability
 
-
-##  Installation and Getting Started
+## Installation and Getting Started
 
 Getting started is simple.
 
 ### macOS (Homebrew)
+
 ```bash
 brew tap andev0x/tap
 brew install gutst
 ```
+
 ### Example Usage
+
 ```bash
 guts users.csv
 guts data.json
@@ -203,17 +199,17 @@ guts "postgres://user:password@localhost:5432/db"
 ```
 
 > No complex setup.
-Just run and explore.
+> Just run and explore.
 
-##  Why Guts Exists — Beyond Another CLI Tool
+## Why Guts Exists — Beyond Another CLI Tool
 
 Guts isn’t just about solving a problem.
 
 It’s about a mindset:
 
-Stay close to the system
-Reduce dependency on heavy GUIs
-Build tools that are composable and transparent
+- Stay close to the system
+- Reduce dependency on heavy GUIs
+- Build tools that are composable and transparent
 
 As I moved deeper into terminal-first workflows (Neovim, Tmux, Ghostty),
 I realized something:
@@ -226,16 +222,16 @@ Guts is built on that belief.
 
 Guts is:
 
-Actively maintained
-Production-ready
-Continuously improving
+- Actively maintained
+- Production-ready
+- Continuously improving
 
 It already supports:
 
-Multiple data formats and databases
-Efficient rendering and navigation
-Query execution and filtering
-Full customization
+- Multiple data formats and databases
+- Efficient rendering and navigation
+- Query execution and filtering
+- Full customization
 
 And it’s open source.
 
@@ -251,10 +247,10 @@ GUI tools still have their place.
 
 > But for:
 
-> - Speed
-> - Focus
-> - Keyboard-driven workflows
-> - Terminal-first environments
+- Speed
+- Focus
+- Keyboard-driven workflows
+- Terminal-first environments
 
 Guts offers a compelling alternative.
 
@@ -270,15 +266,16 @@ Fast, clear, keyboard-first data exploration in the terminal.
 
 If you value:
 
-Performance
-Simplicity
-Control
-Open-source tooling
+- Performance
+- Simplicity
+- Control
+- Open-source tooling
 
 Then Guts might fit naturally into your workflow.
 
-🔵 [GitHub](https://github.com/andev0x/guts)
+- [GitHub](https://github.com/andev0x/guts)
 
-🟢 **Written by**: [andev0x](https://github.com/andev0x)
+---
 
-> Last updated: April 5, 2026
+**Written by:** [andev0x](https://github.com/andev0x)  
+**Last updated:** April 5, 2026

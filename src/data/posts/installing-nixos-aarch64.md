@@ -1,5 +1,4 @@
 ---
-
 title: "Installing NixOS ARM64 with Hyprland on Apple Silicon (VMware Fusion) — Complete Guide"
 slug: "nixos-arm64-hyprland-apple-silicon"
 date: "2025-09-24"
@@ -8,14 +7,11 @@ categories: ["Tutorial", "Linux"]
 excerpt: "Step-by-step guide to installing NixOS ARM64 on Apple Silicon with VMware Fusion, configuring partitions, setting up Hyprland, and deploying a flake-based configuration."
 readingTime: 12
 featured: true
-
 ---
 
 # Installing NixOS ARM64 with Hyprland on Apple Silicon (VMware Fusion) — Complete Guide
 
 > This guide provides a detailed walkthrough for installing NixOS ARM64 on Apple Silicon (M1/M2) using VMware Fusion, setting up partitions, enabling networking, and configuring Hyprland with a flake-based setup optimized for development.
-
-
 
 ## 1. Preparation
 
@@ -27,8 +23,6 @@ featured: true
 * Optional: your own flake or dotfiles repository for customization
 
 **Tip:** Create a VM in VMware Fusion with at least **4GB RAM** and **20GB disk**. Choose **aarch64** architecture for Apple Silicon.
-
-
 
 ## 2. Booting NixOS Minimal ISO
 
@@ -49,8 +43,6 @@ lsblk
 ```
 
 On Apple Silicon with NVMe, you’ll usually see `/dev/nvme0n1`.
-
-
 
 ## 3. Partitioning & Formatting
 
@@ -82,8 +74,6 @@ mount --mkdir /dev/nvme0n1p1 /mnt/boot
 swapon /dev/nvme0n1p2
 ```
 
-
-
 ## 4. Generate NixOS Configuration
 
 ```bash
@@ -94,8 +84,6 @@ This creates:
 
 * `/mnt/etc/nixos/configuration.nix`
 * `/mnt/etc/nixos/hardware-configuration.nix`
-
-
 
 ## 5. Basic System Configuration
 
@@ -136,8 +124,6 @@ Edit `configuration.nix`:
 }
 ```
 
-
-
 ## 6. Install NixOS
 
 ```bash
@@ -151,8 +137,6 @@ reboot
 ```
 
 Remove ISO and boot from the virtual disk.
-
-
 
 ## 7. Deploying with Flakes
 
@@ -177,8 +161,6 @@ Or run the provided script:
 ./deploy.sh
 ```
 
-
-
 ## 8. Hyprland Setup
 
 Hyprland comes pre-configured in this setup with Nord theme, Waybar, and Kitty terminal.
@@ -196,8 +178,6 @@ You can customize configs in:
 * `home/hypr/hyprland.conf`
 * `home/waybar/config`
 
-
-
 ## 9. Development Environment
 
 Pre-installed tools:
@@ -208,13 +188,11 @@ Pre-installed tools:
 * Utilities: ripgrep, fd, fzf, bat, exa, tree
 * Browsers: Firefox, Chromium, Brave, Qute
 
-
-
 ## 10. Troubleshooting
 
-**Build fails** → Check Nix version and flake compatibility.
-**Display issues** → Verify VMware Fusion tools.
-**No internet** → Ensure `networkmanager` or `systemd-networkd` is enabled.
+- **Build fails** → Check Nix version and flake compatibility.
+- **Display issues** → Verify VMware Fusion tools.
+- **No internet** → Ensure `networkmanager` or `systemd-networkd` is enabled.
 
 Logs:
 
@@ -223,15 +201,11 @@ journalctl -xe
 journalctl -u hyprland
 ```
 
-
-
 ## Conclusion
 
 You now have a fully functional NixOS ARM64 system running on Apple Silicon via VMware Fusion, complete with Hyprland, Nord theming, and a developer-ready environment. From here, you can tweak your flake configs, extend development tools, or port this setup to bare-metal Asahi Linux.
 
-[![Neovim](https://img.shields.io/badge/link-fnixos-blue)](https://github.com/andev0x/fnixos)
+---
 
-
-
-**Written by:** [andev0x](https://github.com/andev0x)
+**Written by:** [andev0x](https://github.com/andev0x)  
 **Last updated:** September 24, 2025

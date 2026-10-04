@@ -1,5 +1,4 @@
 ---
-
 title: "Understanding the Modern Container Deployment Flow — Docker, Registry, Kubernetes, Service & Ingress"
 slug: "docker-kubernetes-deployment-flow"
 date: "2026-03-08"
@@ -7,8 +6,6 @@ tags: [docker, kubernetes, devops, containers, microservices, cloud, backend]
 categories: ["DevOps", "Architecture"]
 excerpt: "A practical explanation of how modern applications move from code to production using Docker, container registries, Kubernetes, Services, and Ingress."
 readingTime: 9
-featured: true
-
 ---
 
 # Understanding the Modern Container Deployment Flow — Docker, Registry, Kubernetes, Service & Ingress
@@ -30,10 +27,10 @@ Everything begins with **Docker**.
 
 Docker allows developers to package an application together with:
 
-* Runtime
-* Dependencies
-* Environment configuration
-* Startup commands
+- Runtime
+- Dependencies
+- Environment configuration
+- Startup commands
 
 This packaged unit is called a **Docker Image**.
 
@@ -60,7 +57,7 @@ docker build -t myapp:v1 .
 
 At this stage we now have:
 
-```
+```text
 myapp:v1
 ```
 
@@ -78,9 +75,9 @@ That place is a **container registry**.
 
 Common registries include:
 
-* Docker Hub
-* GitHub Container Registry
-* Amazon Elastic Container Registry
+- Docker Hub
+- GitHub Container Registry
+- Amazon Elastic Container Registry
 
 The image is pushed to the registry:
 
@@ -90,7 +87,7 @@ docker push username/myapp:v1
 
 At this point the flow looks like this:
 
-```
+```text
 Developer → Build Docker Image → Push to Registry
 ```
 
@@ -138,14 +135,14 @@ kubectl apply -f deployment.yaml
 
 Kubernetes will:
 
-* Pull the Docker image from the registry
-* Create multiple Pods
-* Run containers inside those Pods
-* Automatically restart them if they fail
+- Pull the Docker image from the registry
+- Create multiple Pods
+- Run containers inside those Pods
+- Automatically restart them if they fail
 
 Example running Pods:
 
-```
+```text
 myapp-pod-1
 myapp-pod-2
 myapp-pod-3
@@ -165,9 +162,9 @@ To solve this, Kubernetes introduces the concept of a **Kubernetes Service**.
 
 A Service provides:
 
-* A stable virtual IP
-* Internal load balancing
-* A consistent way to reach Pods
+- A stable virtual IP
+- Internal load balancing
+- A consistent way to reach Pods
 
 Example Service configuration:
 
@@ -186,7 +183,7 @@ spec:
 
 Traffic flow now looks like:
 
-```
+```text
 Service
    │
  ┌─┴─┐
@@ -212,14 +209,14 @@ Ingress acts as a **reverse proxy and routing layer**.
 
 Example routing:
 
-```
+```text
 api.example.com   → api-service
 admin.example.com → admin-service
 ```
 
 Traffic flow becomes:
 
-```
+```text
 Internet
    │
    ▼
@@ -234,9 +231,9 @@ Pods
 
 This allows multiple services to be exposed through a single entry point while handling:
 
-* Domain routing
-* HTTPS termination
-* Traffic management
+- Domain routing
+- HTTPS termination
+- Traffic management
 
 ---
 
@@ -244,7 +241,7 @@ This allows multiple services to be exposed through a single entry point while h
 
 Putting everything together, the complete production pipeline looks like this:
 
-```
+```text
 Developer
    │
    ▼
@@ -271,13 +268,13 @@ Users access via domain
 
 Example user request:
 
-```
+```text
 https://api.example.com
 ```
 
 Actual routing path:
 
-```
+```text
 User
   ↓
 Ingress
@@ -315,7 +312,7 @@ Services and Ingress provide load balancing and routing.
 
 Each layer has a clear responsibility.
 
-```
+```text
 Docker     → Packaging
 Registry   → Storage
 Kubernetes → Orchestration
@@ -339,6 +336,5 @@ If you're learning backend development or DevOps, mastering this architecture wi
 
 ---
 
-🟢 **Written by**: [andev0x](https://github.com/andev0x)
-
-> Last updated: March 8, 2026
+**Written by:** [andev0x](https://github.com/andev0x)  
+**Last updated:** March 8, 2026

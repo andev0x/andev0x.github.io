@@ -13,7 +13,6 @@ featured: true
 
 > This article shares my journey from GUI-heavy IDEs to a terminal-first workflow powered by Ghostty, Neovim, and Tmux — focused on performance, control, and building tools for the open-source community.
 
-
 ## 1. Where It Started — VS Code & Traditional IDEs
 
 Like many developers, I began with **VS Code** and language-specific IDEs (especially for Go).
@@ -34,7 +33,6 @@ But over time, I started noticing something:
 - Increasing dependency on GUI environments.
 
 I wasn’t just looking for speed — I was looking for ownership of my workflow.
-
 
 ## 2. The Zed Phase — Performance & Rust Influence
 
@@ -57,7 +55,6 @@ Performance alone wasn’t the end goal.
 
 I wanted deeper integration with the system itself — especially as I started working more heavily on Linux.
 
-
 ## 3. Falling Back in Love with the Terminal
 
 The more time I spent inside Linux environments, the more I appreciated the terminal.
@@ -75,7 +72,6 @@ It doesn’t try to abstract everything away.
 It exposes the system.
 
 That’s when I decided to seriously revisit **Neovim**.
-
 
 ## 4. Neovim — From Frustration to Control
 
@@ -112,7 +108,6 @@ It worked consistently across environments.
 
 That consistency was a turning point.
 
-
 ## 5. Adding Tmux — True Session Resilience
 
 Once fully committed to terminal-first development, I added **Tmux** to the stack.
@@ -133,7 +128,6 @@ Tmux gave me:
 - Protection from accidental `Cmd + Q` moments
 
 Now my editor wasn’t just lightweight — it was resilient.
-
 
 ## 6. Choosing the Right Terminal — Ghostty
 
@@ -156,14 +150,13 @@ On macOS, it integrates seamlessly into my development workflow.
 
 It became the final piece of the puzzle.
 
-
 ## 7. The Final Stack
 
 My current setup:
+
 - **Terminal:** Ghostty
 - **Editor:** Neovim
 - **Session Manager:** Tmux
-
 
 This combination gives me:
 
@@ -175,7 +168,6 @@ This combination gives me:
 - Composable tooling
 
 It feels intentional.
-
 
 ## 8. Why This Matters — Beyond Personal Preference
 
@@ -198,7 +190,6 @@ It’s about contributing something meaningful.
 
 Even something small.
 
-
 ## 9. Will I Change Again?
 
 Maybe.
@@ -215,7 +206,6 @@ But right now, this setup feels:
 
 And that matters.
 
-
 ## Conclusion
 
 Moving from full-featured IDEs to a terminal-first workflow wasn’t about rejecting modern tooling.
@@ -224,13 +214,14 @@ It was about reclaiming control.
 
 Today, I’m genuinely happy with:
 
-**TMUX + NEOVIM + GHOSTTY**
+**TMUX + NEOVIM + GHOSTTY** — small, fast, and doing exactly what I need.
 
 And I’m grateful to the developers who build and maintain these tools with passion and dedication.
 
 If you're exploring ways to simplify and optimize your workflow —
 maybe this combination is worth experimenting with.
 
+---
 
-**Written by:** [andev0x](https://github.com/andev0x)
+**Written by:** [andev0x](https://github.com/andev0x)  
 **Last updated:** March 4, 2026

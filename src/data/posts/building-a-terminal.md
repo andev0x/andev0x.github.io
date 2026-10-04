@@ -9,24 +9,20 @@ readingTime: 5
 featured: true
 ---
 
-# **🖥️ Building a Terminal-Inspired Web Interface**
+# Building a Terminal-Inspired Web Interface
 
 In this post, we'll explore how to create a web interface that captures the essence of terminal computing while maintaining modern usability.
 
-
-
-## **🎯 Goals**
+## Goals
 
 Creating a terminal-inspired interface requires balancing nostalgia with functionality. We need to:
 
-- ✅ Maintain readability with high contrast colors  
-- ⌨️ Implement keyboard navigation for power users  
-- 📱 Ensure responsive design across devices  
-- ⚡ Optimize performance for smooth animations  
+- Maintain readability with high contrast colors
+- Implement keyboard navigation for power users
+- Ensure responsive design across devices
+- Optimize performance for smooth animations
 
-
-
-## **🎨 Color Palette**
+## Color Palette
 
 We use a carefully selected palette:
 
@@ -34,17 +30,13 @@ We use a carefully selected palette:
 - *Primary:* `#00FF00` (neon green)  
 - *Accents:* Various shades of green  
 
-
-
-## **✍️ Typography**
+## Typography
 
 - *VT323* for body text and headings  
 - *Press Start 2P* for UI accents  
 - *Monospace* for code blocks  
 
-
-
-## **🧭 Vim-style Navigation**
+## Vim-style Navigation
 
 Vim-style keyboard controls enhance the terminal experience:
 
@@ -68,5 +60,8 @@ const handleKeyDown = (event) => {
   }
 };
 ```
+
+---
+
 **Written by:** [andev0x](https://github.com/andev0x)  
-**Last updated:** July 16, 2025  
+**Last updated:** July 16, 2025

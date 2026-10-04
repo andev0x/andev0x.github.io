@@ -10,6 +10,8 @@ readingTime: 1
 featured: false
 ---
 
+# Getting Started with Git: A Beginner-Friendly Guide
+
 **Git is the backbone of modern software collaboration. Whether you're a solo coder or part of a team, knowing Git is essential.**
 
 ## _What is Git?_
@@ -21,17 +23,18 @@ featured: false
 - **macOS:**
 
 ```bash
-  brew install git
+brew install git
 ```
 
 - **Ubuntu/Debian:**
 
 ```bash
-  sudo apt update
-  sudo apt install git
+sudo apt update
+sudo apt install git
 ```
 
-* **Windows:**
+- **Windows:**
+
   Download and install from [https://git-scm.com/download/win](https://git-scm.com/download/win)
 
 ## Basic Configuration
@@ -75,19 +78,19 @@ git commit -m "Initial commit"    # Make your first commit
 
 ## Collaborating with Others
 
-* Clone a repository:
+- Clone a repository:
 
   ```bash
   git clone https://github.com/username/repo.git
   ```
 
-* Pull the latest changes:
+- Pull the latest changes:
 
   ```bash
   git pull origin main
   ```
 
-* Resolve merge conflicts:
+- Resolve merge conflicts:
 
   1. Edit the conflicting files
   2. Stage the resolved file:
@@ -99,19 +102,19 @@ git commit -m "Initial commit"    # Make your first commit
 
 ## Bonus Tips
 
-* Undo last commit but keep changes:
+- Undo last commit but keep changes:
 
   ```bash
   git reset --soft HEAD~1
   ```
 
-* Unstage a file:
+- Unstage a file:
 
   ```bash
   git reset filename.txt
   ```
 
-* View history of a file:
+- View history of a file:
 
   ```bash
   git log -- filename.txt
@@ -119,16 +122,15 @@ git commit -m "Initial commit"    # Make your first commit
 
 ## Resources
 
-* [Official Git Documentation](https://git-scm.com/doc)
-* [Pro Git Book](https://git-scm.com/book/en/v2)
-* [GitHub Docs](https://docs.github.com/)
+- [Official Git Documentation](https://git-scm.com/doc)
+- [Pro Git Book](https://git-scm.com/book/en/v2)
+- [GitHub Docs](https://docs.github.com/)
 
 ## Final Thoughts
 
-Git may feel overwhelming at first, but with daily usage, it becomes a natural part of your workflow. Start small by version-controlling your personal projects, and build your confidence step by step. Happy coding! 🚀 
+Git may feel overwhelming at first, but with daily usage, it becomes a natural part of your workflow. Start small by version-controlling your personal projects, and build your confidence step by step. Happy coding!
 
-
-## Happy debugging! 🐞
+---
 
 **Written by:** [andev0x](https://github.com/andev0x)  
-**Last updated:** July 1, 2025  
+**Last updated:** July 1, 2025
