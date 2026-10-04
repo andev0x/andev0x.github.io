@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Loader2, Mail, Send } from 'lucide-react';
+import { SOCIALS } from '../data/socials';
 import { Modal } from './Modal';
 
 /**
@@ -163,6 +164,41 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({ open, onClose }) =
           Found a bug, have an idea for a post, or just want to say hi? Send a note — it lands in the
           same inbox as the site.
         </p>
+
+        {/* Channels sit above the form, not after it: a reader who came to follow
+            or report something should not scroll past four inputs first. Each card
+            carries its handle and purpose, because a row of three bare icons says
+            nothing about which account opens or whether a message is welcome. */}
+        <p className="mb-2 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-fg-subtle/70">
+          or reach me directly
+        </p>
+        <ul className="mb-5 grid gap-2 sm:grid-cols-3">
+          {SOCIALS.map(({ label, handle, href, icon: Icon, blurb }) => (
+            <li key={label}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer me"
+                aria-label={`${label} ${handle} — ${blurb}`}
+                className="group flex h-full items-start gap-2.5 rounded-lg border border-border bg-elevated px-3 py-2.5 transition-colors duration-150 hover:border-accent/50 hover:bg-surface"
+              >
+                <Icon
+                  size={15}
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                  className="mt-0.5 shrink-0 text-fg-subtle transition-colors group-hover:text-accent"
+                />
+                <span className="min-w-0">
+                  <span className="block truncate font-mono text-[0.68rem] text-fg">{label}</span>
+                  <span className="mt-0.5 block truncate font-mono text-[0.62rem] text-accent/90">
+                    {handle}
+                  </span>
+                  <span className="mt-1 block truncate font-mono text-[0.6rem] text-fg-subtle">{blurb}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
 
         {status === 'sent' ? (
           <div role="status" className="rounded-lg border border-accent/50 bg-accent/10 px-4 py-6 text-center">

@@ -1,11 +1,5 @@
 import React from 'react';
-import { Github, Rss, Send } from 'lucide-react';
-
-const LINKS = [
-  { href: 'https://github.com/andev0x', label: 'GitHub', icon: Github },
-  { href: 'https://bsky.app/profile/anvndev.bsky.social', label: 'Bluesky', icon: Send },
-  { href: 'https://mastodon.social/@anvndev', label: 'Mastodon', icon: Rss },
-];
+import { SOCIALS } from '../data/socials';
 
 export const Footer: React.FC = () => (
   <footer className="mt-16 border-t border-border">
@@ -18,7 +12,7 @@ export const Footer: React.FC = () => (
       </div>
 
       <ul className="flex items-center gap-1">
-        {LINKS.map(({ href, label, icon: Icon }) => (
+        {SOCIALS.map(({ label, href, icon: Icon }) => (
           <li key={label}>
             <a
               href={href}
