@@ -27,6 +27,17 @@ export const getPostById = (id: string): PostMeta =>
   posts.find((post) => post.id === id) ?? EMPTY_POST;
 
 /**
+ * Same lookup, but honest about a miss.
+ *
+ * `getPostById` cannot express "no such post" — it substitutes a placeholder so
+ * components always get a renderable object. Deep links need the opposite: a
+ * shared URL can name a post that no longer exists, and that has to be
+ * distinguishable from "the empty post was requested".
+ */
+export const findPostById = (id: string): PostMeta | null =>
+  posts.find((post) => post.id === id) ?? null;
+
+/**
  * Category -> post count, sorted by name. Computed once at module scope so it
  * costs nothing per render.
  */

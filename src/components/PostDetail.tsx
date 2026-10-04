@@ -5,6 +5,7 @@ import { formatLongDate } from '../utils/format';
 import { scrollToTop } from '../utils/scroll';
 import { loadPostContent } from '../data/posts';
 import { CommentSection } from './CommentSection';
+import { RelatedArticles } from './RelatedArticles';
 
 /**
  * react-markdown plus the Prism grammars live in their own chunk, fetched the
@@ -27,9 +28,11 @@ const ArticleSkeleton = () => (
 interface PostDetailProps {
   post: PostMeta;
   onBack: () => void;
+  /** Opens another post in place — used by the related articles trail. */
+  onOpenPost: (post: PostMeta) => void;
 }
 
-export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
+export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack, onOpenPost }) => {
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -130,6 +133,10 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
             <Markdown content={content} />
           </Suspense>
         )}
+
+        {/* Before the comment section, not after it: this is still part of
+            reading the post, where the visitor wants somewhere to go next. */}
+        <RelatedArticles post={post} onOpen={onOpenPost} />
 
         <section className="mt-14">
           <h2 className="mb-3 font-display text-2xl text-fg">rate &amp; comment</h2>

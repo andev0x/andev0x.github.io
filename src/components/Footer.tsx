@@ -36,7 +36,7 @@ export const Footer: React.FC = () => (
 
     <div className="container pb-10">
       <p className="font-mono text-[0.65rem] text-fg-subtle">
-        © {new Date().getFullYear()} andev0x · built with react + tailwind
+        © {new Date().getFullYear()} andev0x
       </p>
     </div>
   </footer>

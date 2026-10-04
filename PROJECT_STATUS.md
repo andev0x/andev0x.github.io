@@ -24,8 +24,12 @@ Your terminal-inspired tech blog is fully functional with both frontend and back
    - ✅ Comments system with real-time updates
    - ✅ Star rating attached to each comment
    - ✅ Neovim-style keyboard navigation (`j`/`k`, `gg`, `G`, `zz`/`zt`/`zb`,
-     `Ctrl-d`/`Ctrl-u`, `/`, `c`, `d`, `?`, `i`, `q`/`Esc`) — press `?` in the
-     app for the full list
+     `yy`, `/`, `c`, `d`, `m`, `?`, `i`, `q`/`Esc`) — press `?` in the app for the
+     full list
+   - ✅ Shareable post links (`#/post/<id>`): deep-linkable, reload-proof and
+     back-button-able; `yy` copies the URL of the post you are on or highlighting
+   - ✅ Related articles under each post, ranked by shared tags (punctuation-
+     insensitive) + categories, diversified so the picks are not near-duplicates
    - ✅ Full post list rendered (no pagination truncation)
    - ✅ GPU-friendly animations that respect `prefers-reduced-motion`
 

@@ -376,6 +376,11 @@
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    /* Collapsing the duration is not enough on its own: a staggered reveal uses
+       `both` fill, so a delayed item stays at its `from` state — invisible —
+       until the delay it was supposed to skip has elapsed. */
+    animation-delay: 0ms !important;
+    transition-delay: 0ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }

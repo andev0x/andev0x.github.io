@@ -9,6 +9,12 @@ interface StatusBarProps {
   searchTerm: string;
   /** In-flight chord prefix (`g`, `z`, …). */
   pending: string;
+  /**
+   * Transient confirmation of a key action (`link copied`). Shown in the mode
+   * cell, which is the one piece of the status line Vim itself borrows for
+   * exactly this.
+   */
+  notice: string;
   theme: 'light' | 'dark';
 }
 
@@ -25,6 +31,7 @@ export const StatusBar: React.FC<StatusBarProps> = ({
   category,
   searchTerm,
   pending,
+  notice,
   theme,
 }) => {
   const searching = searchTerm.trim().length > 0;
@@ -32,9 +39,15 @@ export const StatusBar: React.FC<StatusBarProps> = ({
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-canvas/90 backdrop-blur-md">
       <div className="container flex h-7 items-center gap-1">
-        {/* Mode */}
-        <span className={`${cell} border-r border-border font-medium uppercase tracking-wider text-accent`}>
-          {pending ? `${pending}…` : mode}
+        {/* Mode. `aria-live` because a keypress that copies a link has no other
+            visible result — without it the confirmation is silent for anyone not
+            looking at the corner of the screen. */}
+        <span
+          role="status"
+          aria-live="polite"
+          className={`${cell} border-r border-border font-medium uppercase tracking-wider text-accent`}
+        >
+          {pending ? `${pending}…` : notice || mode}
         </span>
 
         {/* Position */}

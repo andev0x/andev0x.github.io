@@ -6,7 +6,16 @@ import { revealElement } from '../utils/scroll';
 interface PostListProps {
   posts: SearchResult[];
   query: string;
+  /**
+   * Index of the highlighted card within the *whole* result set.
+   *
+   * The home page renders two lists (Featured, then All Articles) so a single
+   * cursor can walk both. `cursorStart` is the position this list occupies in
+   * that flattened order, which is what keeps the numbered badge and the cursor
+   * rail consistent across the split.
+   */
   cursorIndex: number;
+  cursorStart?: number;
   onOpen: (post: PostMeta) => void;
   onClearFilters: () => void;
   hasFilters: boolean;
@@ -21,6 +30,7 @@ export const PostList: React.FC<PostListProps> = ({
   posts,
   query,
   cursorIndex,
+  cursorStart = 0,
   onOpen,
   onClearFilters,
   hasFilters,
@@ -59,9 +69,9 @@ export const PostList: React.FC<PostListProps> = ({
         <li key={result.item.id}>
           <PostCard
             post={result.item}
-            index={index}
+            index={cursorStart + index}
             query={query}
-            isCursor={index === cursorIndex}
+            isCursor={cursorStart + index === cursorIndex}
             onOpen={onOpen}
           />
         </li>
