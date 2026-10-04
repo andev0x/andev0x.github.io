@@ -68,9 +68,16 @@ export default {
           '0%,50%': { opacity: '1' },
           '50.01%,100%': { opacity: '0' },
         },
-        'sweep-line': {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(200%)' },
+        // About wordmark: glyphs resolve one character at a time, each dropping
+        // into place instead of the whole line fading in as one slab.
+        'glyph-in': {
+          from: { opacity: '0', transform: 'translate3d(0,-0.35em,0)' },
+          to: { opacity: '1', transform: 'none' },
+        },
+        // A single accent scan crossing the wordmark while it resolves.
+        'glyph-scan': {
+          from: { transform: 'translateX(-120%)' },
+          to: { transform: 'translateX(420%)' },
         },
       },
       animation: {
@@ -78,7 +85,8 @@ export default {
         pop: 'pop 200ms var(--ease-out) both',
         'pop-right': 'pop-right 180ms var(--ease-out) both',
         'caret-blink': 'caret-blink 1.1s steps(1,end) infinite',
-        'sweep-line': 'sweep-line 2.4s var(--ease-out) infinite',
+        'glyph-in': 'glyph-in 320ms var(--ease-out) both',
+        'glyph-scan': 'glyph-scan 1150ms var(--ease-out) 1 both',
       },
     },
   },
