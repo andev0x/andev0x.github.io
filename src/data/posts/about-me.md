@@ -11,7 +11,7 @@ featured: true
 
 # About Me
 
-Hi! I'm **andev0x** — real name *An Van Nguyen* — a passionate developer who enjoys building robust systems, crafting clean backend architecture, and continuously learning.
+Hi! I'm **andev0x** — real name *An Ng* — a passionate developer who enjoys building robust systems, crafting clean backend architecture, and continuously learning.
 
 I care deeply about developer experience, maintainable codebases, and minimal yet powerful tooling.
 
