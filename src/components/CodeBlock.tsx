@@ -42,17 +42,14 @@ const ALIASES: Record<string, string> = {
 /**
  * Token colours reference the theme's CSS custom properties, so a single style
  * object renders correctly in both light and dark mode with no duplication.
+ *
+ * Only token types live here. Geometry — padding, font, alignment — belongs to
+ * `.code-frame pre` in src/index.css: Prism themes ship a root `pre` rule with
+ * `padding: 0`, and an inline style always outranks a class, so that root rule
+ * silently overrode the frame's padding and left code flush against the left
+ * edge. Nothing below may reintroduce a `pre[...]` key.
  */
 const STYLE = {
-  'pre[class*="language-"]': {
-    background: 'transparent',
-    color: 'rgb(var(--c-fg))',
-    fontFamily: 'inherit',
-    margin: 0,
-    padding: 0,
-    fontSize: 'inherit',
-    lineHeight: 'inherit',
-  },
   comment: { color: 'rgb(var(--c-syn-comment))', fontStyle: 'italic' },
   prolog: { color: 'rgb(var(--c-syn-comment))' },
   doctype: { color: 'rgb(var(--c-syn-comment))' },
@@ -127,13 +124,17 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
           style={STYLE}
           PreTag="pre"
           useInlineStyles
-          customStyle={{}}
+          // Only the background is set here. Without it the library falls back to
+          // its own hard-coded `#fff` pre style, which would blow out the dark
+          // theme. Padding, font and alignment stay in CSS.
+          customStyle={{ background: 'transparent' }}
         >
           {code}
         </SyntaxHighlighter>
       ) : (
-        // Unknown or absent language: plain block, still theme-aware.
-        <pre className="overflow-x-auto p-4 text-[0.85rem] leading-relaxed">
+        // Unknown or absent language: same geometry, no grammar. Padding and
+        // alignment come from `.code-frame pre`, so both paths line up.
+        <pre>
           <code>{code}</code>
         </pre>
       )}

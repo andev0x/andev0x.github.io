@@ -354,13 +354,30 @@
     @apply border-0 bg-transparent p-0 text-inherit;
   }
 
-  /* Code block header injected by CodeBlock. */
+  /* Code block frame (CodeBlock.tsx) — language bar plus body.
+
+     All geometry lives here rather than in the highlighter's inline styles.
+     react-syntax-highlighter writes its `pre[class*="language-"]` theme rule
+     straight onto the element as an inline style, and an inline style outranks
+     every class rule — a `padding: 0` there is exactly what left code flush
+     against the left edge with no inset at all. */
   .code-frame {
     @apply my-6 overflow-hidden rounded-xl border border-border bg-elevated;
   }
 
   .code-frame pre {
-    @apply my-0 rounded-none border-0 bg-transparent;
+    @apply m-0 overflow-x-auto rounded-none border-0 bg-transparent py-4 pl-4 pr-3
+           text-left font-mono text-[0.85rem] leading-relaxed;
+    /* Shells, Nix and YAML all rely on column alignment; 2 matches the width
+       the bodies are written at and keeps a stray tab from jumping a block. */
+    tab-size: 2;
+  }
+
+  /* Long unbroken lines (URLs, hashes) scroll instead of reflowing, so the
+     code column keeps its shape. */
+  .code-frame pre code {
+    @apply whitespace-pre;
+    word-break: normal;
   }
 }
 
