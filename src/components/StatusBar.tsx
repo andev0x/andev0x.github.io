@@ -37,7 +37,9 @@ export const StatusBar: React.FC<StatusBarProps> = ({
   const searching = searchTerm.trim().length > 0;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-canvas/90 backdrop-blur-md">
+    // See the header: `backdrop-filter` here meant a full backdrop blur on every
+    // scroll frame, for a bar that is opaque enough not to need it.
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-canvas/95">
       <div className="container flex h-7 items-center gap-1">
         {/* Mode. `aria-live` because a keypress that copies a link has no other
             visible result — without it the confirmation is silent for anyone not

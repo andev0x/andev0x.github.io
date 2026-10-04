@@ -22,7 +22,10 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenContact,
 }) => {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-canvas/80 backdrop-blur-md">
+    // Opaque rather than frosted: `backdrop-filter` forces the compositor to
+    // re-snapshot and re-blur everything behind this bar on every scroll frame.
+    // At 95% canvas the translucency it bought was barely visible anyway.
+    <header className="sticky top-0 z-40 border-b border-border bg-canvas/95">
       <div className="container flex h-14 items-center gap-3">
         {/* Brand */}
         <div className="flex min-w-0 items-baseline gap-3">

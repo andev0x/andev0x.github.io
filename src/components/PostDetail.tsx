@@ -58,7 +58,9 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack, onOpenPost
   return (
     <article className="animate-enter pb-10">
       {/* Toolbar */}
-      <div className="sticky top-14 z-30 border-b border-border bg-canvas/85 backdrop-blur-md">
+      {/* Opaque like the header — this bar scrolls over long articles, so a
+          `backdrop-filter` here blurred the whole article every frame. */}
+      <div className="sticky top-14 z-30 border-b border-border bg-canvas/95">
         <div className="container flex h-11 items-center gap-3">
           <button
             type="button"
