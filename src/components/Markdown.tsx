@@ -64,7 +64,10 @@ export const Markdown: React.FC<{ content: string }> = ({ content }) => (
               children?: ReactNode;
             };
             const match = /language-([\w+-]+)/.exec(className ?? '');
-            return <CodeBlock code={String(body ?? '').replace(/\n$/, '')} language={match?.[1]} />;
+            // `flatten`, not `String()`: a code body that splits into several
+            // children (inline markup, entities) would otherwise be joined with
+            // commas and highlight as one nonsense token.
+            return <CodeBlock code={flatten(body).replace(/\n$/, '')} language={match?.[1]} />;
           }
           return <pre>{children}</pre>;
         },
