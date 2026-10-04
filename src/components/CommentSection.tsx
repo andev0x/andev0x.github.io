@@ -1,132 +1,157 @@
-import React, { useState, useEffect } from 'react';
-import { Comment } from '../types';
+import React, { useCallback, useEffect, useState } from 'react';
+import type { Comment } from '../types';
 import { fetchComments, postComment } from '../utils/api';
+import { formatTimestamp } from '../utils/format';
+import { StarInput, Stars } from './Stars';
 
 interface CommentSectionProps {
   postId: string;
 }
 
+/**
+ * Notes on this component:
+ * - `fetchComments` resolves the backend availability once (cached in api.ts),
+ *   so the previous extra `/test` round trip per action is gone.
+ * - A generation token guards every `setState` after an await, so switching
+ *   posts mid-flight can no longer write the previous post's comments into
+ *   state.
+ */
 export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
   const [rating, setRating] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch comments on component mount
   useEffect(() => {
-    const loadComments = async () => {
-      try {
-        setLoading(true);
-        const fetchedComments = await fetchComments(postId);
-        setComments(fetchedComments);
-      } catch (err) {
-        setError('Failed to load comments');
-        console.error('Error loading comments:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    let active = true;
+    setLoading(true);
+    setError(null);
 
-    loadComments();
+    fetchComments(postId)
+      .then((loaded) => {
+        if (active) setComments(loaded);
+      })
+      .catch(() => {
+        if (active) setError('could not load comments');
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [postId]);
 
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!author.trim() || !content.trim() || rating == null) return;
-    try {
-      setLoading(true);
+  const canSubmit = author.trim().length > 0 && content.trim().length > 0 && rating !== null;
+
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault();
+      if (!canSubmit || pending) return;
+
+      setPending(true);
       setError(null);
-      // Send rating with comment
-      const newComment = await postComment(postId, {
-        author: author.trim(),
-        content: content.trim(),
-        rating,
-      });
-      setComments([newComment, ...comments]);
-      setAuthor('');
-      setContent('');
-      setRating(null);
-    } catch (err) {
-      setError('Failed to post comment');
-      console.error('Error posting comment:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        const created = await postComment(postId, {
+          author: author.trim(),
+          content: content.trim(),
+          rating: rating ?? undefined,
+        });
+        setComments((current) => [created, ...current]);
+        setContent('');
+        setRating(null);
+      } catch {
+        setError('could not post your comment');
+      } finally {
+        setPending(false);
+      }
+    },
+    [author, canSubmit, content, pending, postId, rating],
+  );
 
   return (
-    <div className="mt-4">
+    <div className="panel rounded-xl p-4 sm:p-5">
       {error && (
-        <div className="mb-4 p-3 bg-red-900/20 border border-red-500/40 rounded text-red-400 font-vt323 text-sm">
+        <p role="alert" className="mb-4 rounded-md border border-border bg-elevated px-3 py-2 font-mono text-xs text-fg-muted">
           {error}
-        </div>
+        </p>
       )}
-      <form onSubmit={handleAddComment} className="mb-6">
-        <div className="flex flex-col md:flex-row gap-2 mb-2">
-          <input
-            type="text"
-            className="bg-transparent border border-terminal-green/40 rounded px-3 py-2 text-terminal-green placeholder-terminal-green/60 font-vt323 flex-1"
-            placeholder="Your name"
-            value={author}
-            onChange={e => setAuthor(e.target.value)}
-            required
+
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <label className="flex-1">
+            <span className="sr-only">Your name</span>
+            <input
+              type="text"
+              value={author}
+              onChange={(event) => setAuthor(event.target.value)}
+              placeholder="your name"
+              maxLength={60}
+              autoComplete="name"
+              className="w-full rounded-md border border-border bg-canvas px-3 py-2 font-mono text-sm text-fg outline-none transition-colors duration-150 placeholder:text-fg-subtle focus:border-accent/60"
+            />
+          </label>
+
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs text-fg-subtle">rating</span>
+            <StarInput value={rating} onChange={setRating} idPrefix={`rate-${postId}`} />
+          </div>
+        </div>
+
+        <label className="block">
+          <span className="sr-only">Your comment</span>
+          <textarea
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
+            placeholder="add a comment…"
+            rows={3}
+            maxLength={2000}
+            className="w-full resize-y rounded-md border border-border bg-canvas px-3 py-2 font-mono text-sm leading-relaxed text-fg outline-none transition-colors duration-150 placeholder:text-fg-subtle focus:border-accent/60"
           />
+        </label>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            disabled={!canSubmit || pending}
+            className="rounded-md border border-accent bg-accent px-4 py-2 font-mono text-xs font-medium text-on-accent transition-opacity duration-150 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {pending ? 'posting…' : 'post comment'}
+          </button>
+          {rating === null && (
+            <span className="font-mono text-[0.68rem] text-fg-subtle">pick a rating first</span>
+          )}
         </div>
-        {/* Star rating selector */}
-        <div className="flex items-center gap-2 mb-2">
-          <span className="font-vt323 text-terminal-green/70">Your rating:</span>
-          {[1,2,3,4,5].map(star => (
-            <button
-              type="button"
-              key={star}
-              className={`text-2xl ${rating && rating >= star ? 'text-terminal-green' : 'text-terminal-green/30'}`}
-              onClick={() => setRating(star)}
-              aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
-            >
-              ★
-            </button>
-          ))}
-        </div>
-        <textarea
-          className="bg-transparent border border-terminal-green/40 rounded px-3 py-2 text-terminal-green placeholder-terminal-green/60 font-vt323 w-full mb-2"
-          placeholder="Add a comment..."
-          value={content}
-          onChange={e => setContent(e.target.value)}
-          rows={3}
-          required
-        />
-        <button
-          type="submit"
-          className="bg-terminal-green text-terminal-black font-vt323 px-4 py-1 rounded hover-glow transition-colors border border-terminal-green/60 mt-2 text-sm w-auto"
-          disabled={loading || rating == null}
-        >
-          {loading ? 'Posting...' : 'Post Comment'}
-        </button>
       </form>
-      <div>
-        {comments.length === 0 ? (
-          <div className="text-terminal-green/40 font-vt323 text-sm">No comments yet. Be the first!</div>
+
+      <div className="mt-6 border-t border-border pt-4">
+        {loading ? (
+          <p className="font-mono text-xs text-fg-subtle">loading comments…</p>
+        ) : comments.length === 0 ? (
+          <p className="font-mono text-xs text-fg-subtle">
+            no comments yet — be the first
+          </p>
         ) : (
-          <ul className="space-y-4">
-            {comments.map(comment => (
-              <li key={comment.id} className="border border-terminal-green/20 rounded p-4 bg-terminal-black/60">
-                <div className="flex items-center mb-1">
-                  <span className="font-vt323 text-terminal-green text-base mr-2">{comment.author}</span>
-                  <span className="text-terminal-green/40 text-xs mr-2">{new Date(comment.createdAt).toLocaleString()}</span>
-                  {/* Show rating if present */}
-                  {comment.rating != null && comment.rating > 0 && (
-                    <span className="ml-2 text-terminal-green/80 text-lg">
-                      {[1,2,3,4,5].map(star => (
-                        <span key={star}>
-                          {comment.rating && comment.rating >= star ? '★' : '☆'}
-                        </span>
-                      ))}
-                    </span>
-                  )}
+          <ul className="space-y-3">
+            {comments.map((comment) => (
+              <li key={comment.id} className="rounded-lg border border-border bg-canvas p-3">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="font-mono text-sm text-fg">{comment.author}</span>
+                  {typeof comment.rating === 'number' && <Stars value={comment.rating} />}
+                  <time
+                    dateTime={comment.createdAt}
+                    className="ml-auto font-mono text-[0.65rem] text-fg-subtle"
+                  >
+                    {formatTimestamp(comment.createdAt)}
+                  </time>
                 </div>
-                <div className="text-terminal-green/80 font-vt323 text-sm whitespace-pre-line">{comment.content}</div>
+                <p className="mt-1.5 whitespace-pre-line break-words font-mono text-sm leading-relaxed text-fg-muted">
+                  {comment.content}
+                </p>
               </li>
             ))}
           </ul>
@@ -134,4 +159,4 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
       </div>
     </div>
   );
-}; 
+};

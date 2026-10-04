@@ -1,208 +1,197 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://go-blog-production-e388.up.railway.app/api/v1';
+import type { Comment } from '../types';
 
-// Mock data storage (fallback when backend is unavailable)
-const mockComments: Record<string, Array<{ id: string; postId: string; author: string; content: string; createdAt: string; rating?: number }>> = {};
-const mockRatings: Record<string, Array<{ id: string; value: number; timestamp: string }>> = {};
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'https://go-blog-production-e388.up.railway.app/api/v1';
 
-// Helper to generate IDs
-const generateId = () => Math.random().toString(36).substr(2, 9);
+const HEALTH_URL = `${API_BASE_URL.replace(/\/api\/v1\/?$/, '')}/test`;
+const PROBE_TIMEOUT_MS = 4000;
 
-// Helper to check if backend is available
-const isBackendAvailable = async (): Promise<boolean> => {
+/* --------------------------------------------------------------------------
+   Offline fallback
+   When the Go backend is unreachable the UI still works: comments and ratings
+   live in memory for the session instead of throwing.
+   -------------------------------------------------------------------------- */
+
+const localComments = new Map<string, Comment[]>();
+const localRatings = new Map<string, Array<{ id: string; value: number; timestamp: string }>>();
+
+const newId = (): string => Math.random().toString(36).slice(2, 11);
+
+const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+
+/* --------------------------------------------------------------------------
+   Backend probe
+   Single-flight and cached: the previous version hit `/test` before *every*
+   read and write, which meant an extra round trip per user action.
+   -------------------------------------------------------------------------- */
+
+let probe: Promise<boolean> | null = null;
+
+const probeBackend = async (): Promise<boolean> => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
   try {
-    const response = await fetch(`${API_BASE_URL.replace('/api/v1', '')}/test`, { 
-      method: 'GET',
-      signal: AbortSignal.timeout(5000) // 5 second timeout for production
-    });
+    const response = await fetch(HEALTH_URL, { method: 'GET', signal: controller.signal });
     return response.ok;
   } catch {
     return false;
+  } finally {
+    clearTimeout(timer);
   }
 };
 
-export async function fetchComments(postId: string) {
-  console.log('Fetching comments for post:', postId);
-  
-  const backendAvailable = await isBackendAvailable();
-  
-  if (backendAvailable) {
+const isBackendAvailable = (): Promise<boolean> => {
+  probe ??= probeBackend().catch(() => false);
+  return probe;
+};
+
+/** Exposed for tests / manual retry from the UI. */
+export const resetBackendProbe = (): void => {
+  probe = null;
+};
+
+const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
+  const response = await fetch(`${API_BASE_URL}${path}`, init);
+  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+  return (await response.json()) as T;
+};
+
+/* --------------------------------------------------------------------------
+   Normalisation
+   The backend has shipped a few field spellings for the same value, so map
+   them all onto the frontend shape in one place.
+   -------------------------------------------------------------------------- */
+
+type RawComment = {
+  id?: string | number;
+  postId?: string;
+  post_id?: string;
+  author?: string;
+  name?: string;
+  content?: string;
+  createdAt?: string;
+  created_at?: string;
+  timestamp?: string;
+  rating?: number;
+};
+
+const toComment = (raw: RawComment, postId: string): Comment => ({
+  id: String(raw.id ?? newId()),
+  postId: raw.postId ?? raw.post_id ?? postId,
+  author: raw.author ?? raw.name ?? 'anon',
+  content: raw.content ?? '',
+  createdAt: raw.createdAt ?? raw.created_at ?? raw.timestamp ?? new Date().toISOString(),
+  ...(typeof raw.rating === 'number' ? { rating: raw.rating } : null),
+});
+
+/* --------------------------------------------------------------------------
+   Comments
+   -------------------------------------------------------------------------- */
+
+export async function fetchComments(postId: string): Promise<Comment[]> {
+  if (await isBackendAvailable()) {
     try {
-      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments`);
-      if (response.ok) {
-        const comments = await response.json();
-        // Map backend fields to frontend fields
-        return comments.map((c: any) => ({
-          id: String(c.id),
-          postId: c.postId || c.post_id || postId,
-          author: c.author || c.name,
-          content: c.content,
-          createdAt: c.createdAt || c.created_at || c.timestamp || new Date().toISOString(),
-          rating: c.rating,
-        }));
-      }
-    } catch (error) {
-      console.warn('Backend unavailable, using mock data:', error);
+      const raw = await request<RawComment[]>(`/posts/${postId}/comments`);
+      if (Array.isArray(raw)) return raw.map((item) => toComment(item, postId));
+    } catch {
+      /* fall through to local cache */
     }
   }
-  
-  // Fallback to mock data
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const comments = mockComments[postId] || [];
-  console.log('Returning mock comments:', comments);
-  return comments;
+
+  await delay(250);
+  return [...(localComments.get(postId) ?? [])];
 }
 
-export async function postComment(postId: string, comment: { author: string; content: string; rating?: number }) {
-  console.log('Posting comment to:', `${API_BASE_URL}/posts/${postId}/comments`);
-  console.log('Comment data:', comment);
-  
-  const backendAvailable = await isBackendAvailable();
-  
-  if (backendAvailable) {
+export async function postComment(
+  postId: string,
+  comment: { author: string; content: string; rating?: number },
+): Promise<Comment> {
+  if (await isBackendAvailable()) {
     try {
-      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments`, {
+      const raw = await request<RawComment>(`/posts/${postId}/comments`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(comment),
       });
-      
-      if (response.ok) {
-        const newComment = await response.json();
-        // Map backend fields to frontend fields
-        return {
-          id: String(newComment.id),
-          postId: newComment.postId || postId,
-          author: newComment.author || newComment.name,
-          content: newComment.content,
-          createdAt: newComment.createdAt || newComment.created_at || newComment.timestamp || new Date().toISOString(),
-          rating: newComment.rating,
-        };
-      } else {
-        const error = await response.text();
-        throw new Error(`Backend error: ${error}`);
-      }
-    } catch (error) {
-      console.warn('Backend unavailable, using mock data:', error);
+      return toComment(raw, postId);
+    } catch {
+      /* fall through to local cache */
     }
   }
-  
-  // Fallback to mock data
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  const newComment = {
-    id: generateId(),
-    postId: postId,
+
+  await delay(400);
+  const created: Comment = {
+    id: newId(),
+    postId,
     author: comment.author,
     content: comment.content,
     createdAt: new Date().toISOString(),
-    rating: comment.rating,
+    ...(typeof comment.rating === 'number' ? { rating: comment.rating } : null),
   };
-  
-  if (!mockComments[postId]) {
-    mockComments[postId] = [];
-  }
-  mockComments[postId].push(newComment);
-  
-  console.log('Mock response:', newComment);
-  return newComment;
+  localComments.set(postId, [created, ...(localComments.get(postId) ?? [])]);
+  return created;
 }
 
-export async function fetchRatings(postId: string) {
-  console.log('Fetching ratings for post:', postId);
-  
-  const backendAvailable = await isBackendAvailable();
-  
-  if (backendAvailable) {
+/* --------------------------------------------------------------------------
+   Ratings
+   -------------------------------------------------------------------------- */
+
+export interface RatingSummary {
+  average: number;
+  count: number;
+}
+
+type RawRating = { id?: string | number; value?: number; rating?: number; timestamp?: string; createdAt?: string; created_at?: string };
+type RawRatingsResponse = { average?: number; total?: number; count?: number } | RawRating[];
+
+const summarise = (payload: RawRatingsResponse): RatingSummary => {
+  if (!Array.isArray(payload)) {
+    return { average: payload.average ?? 0, count: payload.total ?? payload.count ?? 0 };
+  }
+  const values = payload.map((entry) => entry.value ?? entry.rating ?? 0);
+  if (values.length === 0) return { average: 0, count: 0 };
+  return {
+    average: values.reduce((total, value) => total + value, 0) / values.length,
+    count: values.length,
+  };
+};
+
+export async function fetchRatings(postId: string): Promise<RatingSummary> {
+  if (await isBackendAvailable()) {
     try {
-      const response = await fetch(`${API_BASE_URL}/posts/${postId}/ratings`);
-      if (response.ok) {
-        const ratings = await response.json();
-        // If backend returns an array, aggregate; if object, map fields
-        if (Array.isArray(ratings)) {
-          // Legacy: array of ratings
-          const values = ratings.map((r: { value: number; rating: number; }) => r.value || r.rating || 0);
-          const average = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-          return {
-            postId,
-            average,
-            count: values.length,
-            ratings: ratings.map((r: { id: string; value: number; rating: number; timestamp: string; createdAt: string; created_at: string; }) => ({
-              id: r.id,
-              value: r.value || r.rating,
-              timestamp: r.timestamp || r.createdAt || r.created_at,
-            })),
-          };
-        } else {
-          // New API: object with average, total/count, ratings
-          return {
-            postId,
-            average: ratings.average ?? 0,
-            count: ratings.total ?? ratings.count ?? 0,
-            ratings: (ratings.ratings || []).map((r: { id: string; value: number; rating: number; timestamp: string; createdAt: string; created_at: string; }) => ({
-              id: r.id,
-              value: r.value || r.rating,
-              timestamp: r.timestamp || r.createdAt || r.created_at,
-            })),
-          };
-        }
-      }
-    } catch (error) {
-      console.warn('Backend unavailable, using mock data:', error);
+      return summarise(await request<RawRatingsResponse>(`/posts/${postId}/ratings`));
+    } catch {
+      /* fall through to local cache */
     }
   }
-  
-  // Fallback to mock data
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const ratings = mockRatings[postId] || [];
-  console.log('Returning mock ratings:', ratings);
-  return ratings;
+
+  await delay(150);
+  const values = (localRatings.get(postId) ?? []).map((entry) => entry.value);
+  if (values.length === 0) return { average: 0, count: 0 };
+  return {
+    average: values.reduce((total, value) => total + value, 0) / values.length,
+    count: values.length,
+  };
 }
 
-export async function postRating(postId: string, rating: { value: number }) {
-  console.log('Posting rating to:', `${API_BASE_URL}/posts/${postId}/ratings`);
-  console.log('Rating data:', rating);
-  
-  const backendAvailable = await isBackendAvailable();
-  
-  if (backendAvailable) {
+export async function postRating(postId: string, value: number): Promise<RatingSummary> {
+  if (await isBackendAvailable()) {
     try {
-      const response = await fetch(`${API_BASE_URL}/posts/${postId}/ratings`, {
+      const raw = await request<RawRating>(`/posts/${postId}/ratings`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(rating),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value }),
       });
-      
-      if (response.ok) {
-        const newRating = await response.json();
-        console.log('Backend response:', newRating);
-        return newRating;
-      } else {
-        const error = await response.text();
-        throw new Error(`Backend error: ${error}`);
-      }
-    } catch (error) {
-      console.warn('Backend unavailable, using mock data:', error);
+      return summarise([raw]);
+    } catch {
+      /* fall through to local cache */
     }
   }
-  
-  // Fallback to mock data
-  await new Promise(resolve => setTimeout(resolve, 600));
-  
-  const newRating = {
-    id: generateId(),
-    ...rating,
-    timestamp: new Date().toISOString()
-  };
-  
-  if (!mockRatings[postId]) {
-    mockRatings[postId] = [];
-  }
-  mockRatings[postId].push(newRating);
-  
-  console.log('Mock response:', newRating);
-  return newRating;
-} 
+
+  await delay(250);
+  const list = localRatings.get(postId) ?? [];
+  list.push({ id: newId(), value, timestamp: new Date().toISOString() });
+  localRatings.set(postId, list);
+  const total = list.reduce((sum, entry) => sum + entry.value, 0);
+  return { average: total / list.length, count: list.length };
+}

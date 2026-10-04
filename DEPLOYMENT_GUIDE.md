@@ -98,7 +98,27 @@ curl -X POST -H "Content-Type: application/json" \
 
 ## 🔄 **Frontend Deployment**
 
-The frontend is already configured correctly. After backend redeployment:
+### ⚠️ Set the API URL **at build time**
+
+`VITE_API_BASE_URL` is inlined into the bundle when you build. A local `.env`
+pointing at `http://localhost:8080/api/v1` will be baked into `dist/` and
+comments/ratings will silently fall back to in-memory mock data in production
+(the UI shows no error).
+
+```bash
+# local build against the local backend
+npm run build
+
+# production build — set it explicitly
+VITE_API_BASE_URL=https://go-blog-production-e388.up.railway.app/api/v1 npm run build
+```
+
+Sanity check afterwards:
+
+```bash
+grep -o 'go-blog-production[^"]*' dist/assets/*.js | head -1   # expect the prod host
+grep -o 'localhost:8080'        dist/assets/*.js | head -1   # expect nothing
+```
 
 1. **Build frontend**:
    ```bash

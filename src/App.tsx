@@ -1,200 +1,415 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Header } from './components/Header';
 import { PostList } from './components/PostList';
 import { PostDetail } from './components/PostDetail';
 import { Footer } from './components/Footer';
-import { useKeyboard } from './hooks/useKeyboard';
+import { StatusBar } from './components/StatusBar';
+import { HelpOverlay } from './components/HelpOverlay';
+import { AboutDialog } from './components/AboutDialog';
+import CategoryBar from './components/CategoryBar';
+import { useKeyboard, type KeyBinding } from './hooks/useKeyboard';
 import { useSearch } from './hooks/useSearch';
-import { blogPosts } from './data/posts';
-import { BlogPost, SearchResult } from './types';
-import { TerminalAboutMe } from './components/TerminalAboutMe';
-import CategoryBar from './components/CategoryBar'; // Import CategoryBar
-import NavigationHint from './components/NavigationHint'; // Import NavigationHint
+import { useTheme } from './hooks/useTheme';
+import { posts } from './data/posts';
+import type { PostMeta } from './types';
+import {
+  revealElement,
+  scrollBy,
+  scrollToBottom,
+  scrollToFraction,
+  scrollToTop,
+} from './utils/scroll';
 
-console.log('Loaded blog posts:', blogPosts);
+const LINE_SCROLL = 96;
 
 function App() {
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null); // Renamed for clarity
-  const [showAboutMe, setShowAboutMe] = useState(false);
-  const [toggleMode, setToggleMode] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
-
+  const { theme, toggleTheme } = useTheme();
   const {
-    searchTerm,
-    setSearchTerm,
-    searchResults,
-    isSearchActive,
-    activateSearch,
-    deactivateSearch,
-  } = useSearch(blogPosts);
+    term,
+    setTerm,
+    results,
+    isOpen: isSearchOpen,
+    isFiltering,
+    open: openSearch,
+    close: closeSearch,
+    reset: resetSearch,
+  } = useSearch(posts);
 
-  // Filter posts by category
-  const filteredPosts = useMemo(() => {
-    let posts = searchResults as SearchResult[];
-    if (activeCategory) {
-      posts = posts.filter(result => result.item.categories.includes(activeCategory));
-    }
-    return posts.sort((a, b) => new Date(b.item.date).getTime() - new Date(a.item.date).getTime());
-  }, [searchResults, activeCategory]);
+  const [category, setCategory] = useState<string | null>(null);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [cursor, setCursor] = useState(0);
+  const [openPost, setOpenPost] = useState<PostMeta | null>(null);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
-  // Toggle mode functions
-  const handleToggleMode = () => {
-    if (!toggleMode && filteredPosts.length > 0) {
-      setToggleMode(true);
-      setSelectedIndex(0);
+  /* ---------------------------------------------------------------- data -- */
+
+  const visible = useMemo(
+    () =>
+      category === null
+        ? results
+        : results.filter((result) => result.item.categories.includes(category)),
+    [results, category],
+  );
+
+  // Derived rather than synchronised with an effect: one fewer render pass and
+  // the cursor can never point past the end of a filtered list.
+  const safeCursor = visible.length === 0 ? 0 : Math.min(cursor, visible.length - 1);
+
+  const hasFilters = category !== null || isFiltering;
+
+  const clearFilters = useCallback(() => {
+    setCategory(null);
+    setIsCategoriesOpen(false);
+    resetSearch();
+  }, [resetSearch]);
+
+  /* ------------------------------------------------------------ movement -- */
+
+  const moveCursor = useCallback(
+    (delta: number) =>
+      setCursor((current) => {
+        const total = visible.length;
+        if (total === 0) return 0;
+        const from = Math.min(current, total - 1);
+        return (from + delta + total) % total;
+      }),
+    [visible.length],
+  );
+
+  const jumpCursor = useCallback(
+    (position: 'first' | 'last') =>
+      setCursor(() => (position === 'first' ? 0 : Math.max(0, visible.length - 1))),
+    [visible.length],
+  );
+
+  const openPostDetail = useCallback((post: PostMeta) => {
+    // The category bar is hidden while reading; leaving its flag set would make
+    // `q`/Escape "close" an invisible panel instead of leaving the post.
+    setIsCategoriesOpen(false);
+    setOpenPost(post);
+  }, []);
+
+  const openCursorPost = useCallback(() => {
+    const target = visible[safeCursor];
+    if (target) openPostDetail(target.item);
+  }, [openPostDetail, safeCursor, visible]);
+
+  const revealCursor = useCallback((block: ScrollLogicalPosition) => {
+    revealElement(document.querySelector<HTMLElement>('[data-cursor]'), block);
+  }, []);
+
+  /* -------------------------------------------------------------- layers -- */
+
+  // Dismiss the topmost layer first: overlays, then drawers, then the post.
+  const dismiss = useCallback(() => {
+    if (isHelpOpen) return setIsHelpOpen(false);
+    if (isAboutOpen) return setIsAboutOpen(false);
+    if (isSearchOpen) return resetSearch();
+    if (isCategoriesOpen) return setIsCategoriesOpen(false);
+    if (openPost) return setOpenPost(null);
+    if (isFiltering) resetSearch();
+  }, [isAboutOpen, isCategoriesOpen, isFiltering, isHelpOpen, isSearchOpen, openPost, resetSearch]);
+
+  const backToList = useCallback(() => {
+    setOpenPost(null);
+    scrollToTop();
+  }, []);
+
+  /* ------------------------------------------------------------ bindings -- */
+
+  const bindings = useMemo<KeyBinding[]>(() => {
+    const reading = openPost !== null;
+    const list: KeyBinding[] = [
+      {
+        keys: 'Escape',
+        group: 'global',
+        description: 'close the topmost panel, or go back',
+        primary: true,
+        allowInInput: true,
+        run: dismiss,
+      },
+      {
+        keys: 'q',
+        group: 'global',
+        description: 'close the topmost panel, or go back',
+        allowInInput: true,
+        run: dismiss,
+      },
+      {
+        keys: '?',
+        group: 'global',
+        description: 'toggle this help',
+        primary: true,
+        run: () => setIsHelpOpen((value) => !value),
+      },
+      {
+        keys: 'd',
+        group: 'global',
+        description: 'toggle dark / light theme',
+        primary: true,
+        run: toggleTheme,
+      },
+      {
+        keys: 'i',
+        group: 'global',
+        description: 'about this site',
+        primary: true,
+        run: () => setIsAboutOpen(true),
+      },
+      {
+        keys: '/',
+        group: 'search',
+        description: 'search titles, excerpts and tags',
+        primary: true,
+        run: openSearch,
+      },
+      {
+        keys: 'c',
+        group: 'view',
+        description: 'toggle the category panel',
+        primary: true,
+        run: () => setIsCategoriesOpen((value) => !value),
+      },
+      {
+        keys: 'Ctrl-d',
+        group: 'view',
+        description: 'scroll down half a page',
+        primary: true,
+        run: () => scrollBy(window.innerHeight / 2),
+      },
+      {
+        keys: 'Ctrl-u',
+        group: 'view',
+        description: 'scroll up half a page',
+        primary: true,
+        run: () => scrollBy(-window.innerHeight / 2),
+      },
+      {
+        keys: 'L',
+        group: 'view',
+        description: 'jump to the bottom of the page',
+        primary: true,
+        run: scrollToBottom,
+      },
+    ];
+
+    if (reading) {
+      list.push(
+        {
+          keys: 'j',
+          group: 'reading',
+          description: 'scroll down a line',
+          primary: true,
+          run: () => scrollBy(LINE_SCROLL),
+        },
+        {
+          keys: 'k',
+          group: 'reading',
+          description: 'scroll up a line',
+          primary: true,
+          run: () => scrollBy(-LINE_SCROLL),
+        },
+        {
+          keys: 'H',
+          group: 'reading',
+          description: 'jump to the top of the page',
+          primary: true,
+          run: scrollToTop,
+        },
+      );
     } else {
-      setToggleMode(false);
-      setSelectedIndex(0);
+      list.push(
+        {
+          keys: 'j',
+          group: 'navigate',
+          description: 'next post',
+          primary: true,
+          run: () => moveCursor(1),
+        },
+        {
+          keys: 'ArrowDown',
+          group: 'navigate',
+          description: 'next post',
+          run: () => moveCursor(1),
+        },
+        {
+          keys: 'k',
+          group: 'navigate',
+          description: 'previous post',
+          primary: true,
+          run: () => moveCursor(-1),
+        },
+        {
+          keys: 'ArrowUp',
+          group: 'navigate',
+          description: 'previous post',
+          run: () => moveCursor(-1),
+        },
+        {
+          keys: 'gg',
+          group: 'navigate',
+          description: 'first post',
+          primary: true,
+          run: () => jumpCursor('first'),
+        },
+        {
+          keys: 'G',
+          group: 'navigate',
+          description: 'last post',
+          primary: true,
+          run: () => jumpCursor('last'),
+        },
+        {
+          keys: 'Home',
+          group: 'navigate',
+          description: 'first post',
+          run: () => jumpCursor('first'),
+        },
+        {
+          keys: 'End',
+          group: 'navigate',
+          description: 'last post',
+          run: () => jumpCursor('last'),
+        },
+        {
+          keys: 'Enter',
+          group: 'navigate',
+          description: 'open the post under the cursor',
+          primary: true,
+          run: openCursorPost,
+        },
+        {
+          keys: 'o',
+          group: 'navigate',
+          description: 'open the post under the cursor',
+          run: openCursorPost,
+        },
+        {
+          keys: 'zz',
+          group: 'navigate',
+          description: 'centre the post under the cursor',
+          run: () => revealCursor('center'),
+        },
+        {
+          keys: 'zt',
+          group: 'navigate',
+          description: 'put the cursor post at the top',
+          run: () => revealCursor('start'),
+        },
+        {
+          keys: 'zb',
+          group: 'navigate',
+          description: 'put the cursor post at the bottom',
+          run: () => revealCursor('end'),
+        },
+        {
+          keys: 'H',
+          group: 'navigate',
+          description: 'jump to the top of the page',
+          run: scrollToTop,
+        },
+        {
+          keys: 'M',
+          group: 'navigate',
+          description: 'jump to the middle of the page',
+          run: () => scrollToFraction(0.5),
+        },
+      );
     }
-  };
 
-  const handleNextPost = () => {
-    if (filteredPosts.length === 0) return;
-    setSelectedIndex(prev => (prev + 1) % filteredPosts.length);
-  };
+    return list;
+  }, [dismiss, jumpCursor, moveCursor, openCursorPost, openPost, openSearch, revealCursor, toggleTheme]);
 
-  const handlePrevPost = () => {
-    if (filteredPosts.length === 0) return;
-    setSelectedIndex(prev => (prev - 1 + filteredPosts.length) % filteredPosts.length);
-  };
+  const { pending } = useKeyboard(bindings);
 
-  const handleSelectCurrentPost = () => {
-    if (toggleMode && filteredPosts.length > 0 && filteredPosts[selectedIndex]) {
-      setSelectedPost(filteredPosts[selectedIndex].item);
-      setToggleMode(false);
-      setSelectedIndex(0);
-    }
-  };
+  /* --------------------------------------------------------------- title -- */
 
-  // Auto-scroll to selected post in toggle mode and reset index when posts change
   useEffect(() => {
-    if (toggleMode) {
-      // Reset selected index if it's out of bounds
-      if (selectedIndex >= filteredPosts.length) {
-        setSelectedIndex(Math.max(0, filteredPosts.length - 1));
-        return;
-      }
-      
-      if (filteredPosts.length > 0) {
-        const postElements = document.querySelectorAll('[data-post-index]');
-        const selectedElement = postElements[selectedIndex];
-        if (selectedElement) {
-          selectedElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          });
-        }
-      }
-    }
-  }, [toggleMode, selectedIndex, filteredPosts.length]);
+    document.title = openPost
+      ? `${openPost.title} — andev0x`
+      : 'andev0x — terminal tech blog';
+  }, [openPost]);
 
-  // No longer need to compute categories here, CategoryBar does it internally
-  // const categories = useMemo(() => {
-  //   const allCategories = blogPosts.flatMap(post => post.categories);
-  //   return Array.from(new Set(allCategories));
-  // }, []);
+  /* ---------------------------------------------------------------- view -- */
 
-  
-
-  // Keyboard navigation
-  useKeyboard({
-    onSearch: activateSearch,
-    onToggleMode: handleToggleMode,
-    onNextPost: toggleMode ? handleNextPost : undefined,
-    onPrevPost: toggleMode ? handlePrevPost : undefined,
-    onSelectPost: toggleMode ? handleSelectCurrentPost : undefined,
-    onScrollDown: toggleMode ? undefined : () => window.scrollBy(0, 100),
-    onScrollUp: toggleMode ? undefined : () => window.scrollBy(0, -100),
-    onScrollTop: () => window.scrollTo(0, 0),
-    onScrollBottom: () => window.scrollTo(0, document.body.scrollHeight),
-    onToggleCategory: () => setCategoryMenuOpen(o => !o),
-    onEscape: () => {
-      if (categoryMenuOpen) {
-        setCategoryMenuOpen(false);
-      } else if (toggleMode) {
-        setToggleMode(false);
-        setSelectedIndex(0);
-      } else if (selectedPost) {
-        setSelectedPost(null);
-      } else if (isSearchActive) {
-        deactivateSearch();
-      }
-    },
-  });
-
-  const handlePostClick = (post: BlogPost) => {
-    setSelectedPost(post);
-  };
-
-  const handleBackToList = () => {
-    setSelectedPost(null);
-  };
-
-  const handleSearchActivate = () => {
-    activateSearch();
-  };
-
-  const handleSearchDeactivate = () => {
-    deactivateSearch();
-  };
+  const heading = isFiltering
+    ? `results for “${term.trim()}”`
+    : category
+      ? category
+      : 'latest writing';
 
   return (
-    <div className="min-h-screen text-terminal-green">
+    <div className="app-shell flex min-h-dvh flex-col pb-7">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:border focus:border-accent focus:bg-surface focus:px-3 focus:py-2 focus:font-mono focus:text-sm focus:text-accent"
+      >
+        Skip to content
+      </a>
+
       <Header
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        isSearchActive={isSearchActive}
-        onSearchActivate={handleSearchActivate}
-        onSearchDeactivate={handleSearchDeactivate}
-        onAboutMe={() => setShowAboutMe(true)}
+        searchTerm={term}
+        isSearchOpen={isSearchOpen}
+        onSearchTermChange={setTerm}
+        onSearchOpen={openSearch}
+        onSearchClose={closeSearch}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onOpenHelp={() => setIsHelpOpen(true)}
+        onOpenAbout={() => setIsAboutOpen(true)}
       />
 
-      {!selectedPost && (
-          <>
-            <CategoryBar
-              onSelectCategory={setActiveCategory}
-              activeCategory={activeCategory}
-              isOpen={categoryMenuOpen}
-              onToggle={() => setCategoryMenuOpen(o => !o)}
-            />
-            <NavigationHint toggleMode={toggleMode} />
-          </>
-        )}
+      {openPost === null && (
+        <CategoryBar
+          activeCategory={category}
+          onSelectCategory={setCategory}
+          isOpen={isCategoriesOpen}
+          onToggle={() => setIsCategoriesOpen((value) => !value)}
+          resultCount={visible.length}
+          resultTotal={posts.length}
+        />
+      )}
 
-      <main className="container mx-auto px-4 py-8">
-        
-        {selectedPost ? (
-          <PostDetail post={selectedPost} onBack={handleBackToList} />
+      <main id="main" className="container flex-1 py-6">
+        {openPost ? (
+          <PostDetail post={openPost} onBack={backToList} />
         ) : (
           <>
-            <div className="mb-8">
-              <div className="text-terminal-green/60 terminal-accent text-sm mb-2">
-                {searchTerm && `Search results for "${searchTerm}"`}
-                {activeCategory && `Category: ${activeCategory}`}
-                {!searchTerm && !activeCategory && 'Latest posts'}
-              </div>
+            <div className="mb-4 flex items-baseline justify-between gap-4">
+              <h1 className="font-display text-2xl text-fg sm:text-3xl">{heading}</h1>
+              <p className="shrink-0 font-mono text-xs text-fg-subtle">
+                {visible.length} post{visible.length === 1 ? '' : 's'}
+              </p>
             </div>
+
             <PostList
-              posts={filteredPosts}
-              onPostClick={handlePostClick}
-              toggleMode={toggleMode}
-              selectedIndex={selectedIndex}
+              posts={visible}
+              query={term}
+              cursorIndex={safeCursor}
+              onOpen={openPostDetail}
+              onClearFilters={clearFilters}
+              hasFilters={hasFilters}
             />
           </>
         )}
       </main>
 
-      <Footer />
+      {openPost === null && <Footer />}
 
-      {showAboutMe && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="relative">
-            <TerminalAboutMe onClose={() => setShowAboutMe(false)} />
-          </div>
-        </div>
-      )}
+      <StatusBar
+        mode={openPost ? 'READ' : 'NORMAL'}
+        cursor={safeCursor}
+        total={visible.length}
+        category={category}
+        searchTerm={term}
+        pending={pending}
+        theme={theme}
+      />
+
+      <HelpOverlay open={isHelpOpen} onClose={() => setIsHelpOpen(false)} bindings={bindings} />
+
+      <AboutDialog open={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
     </div>
   );
 }

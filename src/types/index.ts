@@ -1,9 +1,10 @@
-export interface BlogPost {
+/** Front-matter only. The markdown body is fetched separately, on demand. */
+export interface PostMeta {
   id: string;
-  title: string;
   slug: string;
-  content: string;
+  title: string;
   excerpt: string;
+  /** ISO date string from front matter. */
   date: string;
   tags: string[];
   categories: string[];
@@ -11,51 +12,32 @@ export interface BlogPost {
   featured: boolean;
 }
 
+/** A post whose markdown body has been loaded. */
+export interface Post extends PostMeta {
+  content: string;
+}
+
+/**
+ * A search hit. Deliberately carries no fuzzy match ranges — highlighting is
+ * done from the raw query (see `PostCard`), so Fuse never has to compute them.
+ */
 export interface SearchResult {
-  item: BlogPost;
+  item: PostMeta;
   score?: number;
-  matches?: Array<{
-    indices: readonly [number, number][];
-    key?: string;
-    refIndex?: number;
-    value?: string;
-  }>;
 }
 
-
-export interface KeyboardShortcut {
-  key: string;
-  description: string;
-  action: () => void;
+export interface CategoryCount {
+  name: string;
+  count: number;
 }
 
-// Comment type for a blog post
+export type Theme = 'light' | 'dark';
+
 export interface Comment {
   id: string;
-  postId: string; // BlogPost.id or slug
+  postId: string;
   author: string;
   content: string;
   createdAt: string;
   rating?: number;
-}
-
-// Rating type for a blog post
-export interface Rating {
-  postId: string; // BlogPost.id or slug
-  average: number; // Average rating (e.g., 4.2)
-  count: number;   // Number of ratings
-  userRating?: number; // Optional: current user's rating
-}
-
-// API interface for comments
-export interface CommentAPI {
-  getComments(postId: string): Promise<Comment[]>;
-  addComment(postId: string, author: string, content: string): Promise<Comment>;
-  deleteComment(commentId: string): Promise<void>;
-}
-
-// API interface for ratings
-export interface RatingAPI {
-  getRating(postId: string): Promise<Rating>;
-  ratePost(postId: string, value: number): Promise<Rating>;
 }

@@ -2,61 +2,70 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="google-site-verification" content="cWbhdG4NRP_37KwZKoDj6IVvU0JeH8gS6Dps0OgIF4Y" />
-    <link rel="icon" type="image/svg+xml" href="/sharingan-shisui.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>andev0x | Blog</title>
-    <meta name="description" content="A terminal-inspired tech blog covering development, hacking, and digital adventures" />
-    <meta name="keywords" content="programming, hacking, development, tech, terminal, vim, cybersecurity" />
-    
-    <!-- Preload critical fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="andev0x - Terminal Tech Blog" />
-    <meta property="og:description" content="A terminal-inspired tech blog covering development, hacking, and digital adventures" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://andev0x.github.io" />
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="andev0x - Terminal Tech Blog" />
-    <meta name="twitter:description" content="A terminal-inspired tech blog covering development, hacking, and digital adventures" />
-    
-    <style>
-      /* Custom cursor */
-      * {
-        cursor: url('./kunai.svg') 32 32, auto;
-      }
 
-      /* Prevent FOUC */
-      .font-loading {
-        visibility: hidden;
-      }
-      
-      /* Loading animation */
-      @keyframes blink {
-        0%, 50% { opacity: 1; }
-        51%, 100% { opacity: 0; }
-      }
-      
-      .loading-cursor::after {
-        content: '_';
-        animation: blink 1s infinite;
-        color: #00FF00;
-      }
-    </style>
-  </head>
-  <body class="bg-terminal-black text-terminal-green font-loading">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <title>andev0x — terminal tech blog</title>
+    <meta
+      name="description"
+      content="andev0x writes about development, Neovim, containers and systems work — a keyboard-first, terminal-inspired tech blog."
+    />
+    <meta
+      name="keywords"
+      content="programming, terminal, neovim, vim, devops, containers, kubernetes, backend, systems, andev0x"
+    />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f8f6" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#080b0a" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Press+Start+2P&family=VT323&display=swap"
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="andev0x — terminal tech blog" />
+    <meta
+      property="og:description"
+      content="Development, Neovim, containers and systems work — a keyboard-first tech blog."
+    />
+    <meta property="og:url" content="https://andev0x.github.io" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="andev0x — terminal tech blog" />
+    <meta
+      name="twitter:description"
+      content="Development, Neovim, containers and systems work — a keyboard-first tech blog."
+    />
+
     <script>
-      // Remove font loading class when fonts are loaded
-      document.addEventListener('DOMContentLoaded', () => {
-        document.body.classList.remove('font-loading');
-      });
+      // Resolve the theme before first paint so there is never a flash of the
+      // wrong palette. Kept tiny and dependency-free on purpose.
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('andev0x-theme')
+          var dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+          var root = document.documentElement
+          root.classList.toggle('dark', dark)
+          root.style.colorScheme = dark ? 'dark' : 'light'
+        } catch (e) {
+          /* private mode / storage disabled — fall back to the light palette */
+        }
+      })()
     </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p style="font-family: ui-monospace, monospace; padding: 2rem">
+        This blog renders client-side. Enable JavaScript to read the posts.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -11,37 +11,44 @@ Your terminal-inspired tech blog is fully functional with both frontend and back
 ### ✅ **What's Working Perfectly:**
 
 1. **Core Blog Features**
-   - ✅ Markdown posts loading with proper frontmatter
+   - ✅ Markdown posts loaded with frontmatter parsed at **build time**
+   - ✅ Post bodies fetched on demand (one chunk per post)
+   - ✅ Dark **and** light theme, persisted, no flash on first paint
    - ✅ Terminal-inspired UI with custom kunai cursor
-   - ✅ Scientific markdown rendering (KaTeX + MathJax)
-   - ✅ Code syntax highlighting (atomDark theme)
-   - ✅ Search functionality with Fuse.js
+   - ✅ Code syntax highlighting via `prism-light` (only the grammars used)
+   - ✅ Search functionality with Fuse.js over post metadata
    - ✅ Category filtering system
    - ✅ Responsive design with Tailwind CSS
 
 2. **Interactive Features**
    - ✅ Comments system with real-time updates
-   - ✅ Star rating system (1-5 stars)
-   - ✅ Keyboard navigation (search, scroll, escape)
-   - ✅ "See More" pagination for posts
-   - ✅ Beautiful animations and transitions
+   - ✅ Star rating attached to each comment
+   - ✅ Neovim-style keyboard navigation (`j`/`k`, `gg`, `G`, `zz`/`zt`/`zb`,
+     `Ctrl-d`/`Ctrl-u`, `/`, `c`, `d`, `?`, `i`, `q`/`Esc`) — press `?` in the
+     app for the full list
+   - ✅ Full post list rendered (no pagination truncation)
+   - ✅ GPU-friendly animations that respect `prefers-reduced-motion`
 
 3. **Technical Excellence**
    - ✅ TypeScript with proper type safety
    - ✅ React 18 with modern hooks
    - ✅ Vite for fast development
-   - ✅ Builds successfully without errors
+   - ✅ Builds successfully without errors (`npm run build` = typecheck + bundle)
    - ✅ Environment configuration working
 
 ### 📁 **Frontend Structure:**
 ```
+build/
+└── postsPlugin.ts       # Vite plugin: frontmatter -> manifest + lazy bodies
+assets/                  # Source artwork (NOT shipped; see public/ for the rasters)
+public/                  # Everything served as-is (favicons, cursor)
 src/
 ├── components/          # React components
-├── data/posts/         # Markdown blog posts
-├── hooks/              # Custom React hooks
-├── types/              # TypeScript interfaces
-├── utils/              # Utilities (API, markdown loader)
-└── App.tsx             # Main application
+├── data/posts/          # Markdown blog posts + generated metadata module
+├── hooks/               # useKeyboard, useSearch, useTheme
+├── types/               # TypeScript interfaces
+├── utils/               # API client, date + scroll helpers
+└── App.tsx              # Main application + key bindings
 ```
 
 ---
@@ -139,11 +146,15 @@ go run cmd/server/main.go
 
 ## 📈 **Performance Metrics**
 
-- **Frontend Build Size:** 1.33MB (gzipped: 446KB)
+- **First-visit payload:** ~280 kB raw JS + CSS (~75 kB gzipped), 5 requests
+- **Deferred until a post is opened:** markdown renderer + Prism grammars
+  (~230 kB) and that post's body (1.5–7 kB)
+- **Whole `dist/`:** ~620 kB (was ~6.5 MB before the asset/dependency cleanup)
+- **Post metadata in memory:** titles, excerpts, tags, categories — bodies are
+  not held until requested
 - **Backend Memory Usage:** ~15MB
 - **Database Size:** <1MB (SQLite)
-- **Load Time:** <2 seconds (first load)
-- **Search Performance:** Instant (Fuse.js)
+- **Search Performance:** Instant (Fuse.js over metadata only)
 
 ---
 
@@ -174,7 +185,13 @@ go run cmd/server/main.go
 1. Create `.md` file in `src/data/posts/`
 2. Add proper frontmatter (title, slug, date, categories, etc.)
 3. Write content in markdown
-4. Posts appear automatically in the blog
+4. Posts appear automatically in the blog — no index to update, and no rebuild
+   of any other file is required
+
+> Code fences are highlighted for: `bash`, `docker`, `ini`, `javascript`,
+> `json`, `lua`, `markdown`, `nix`, `typescript`, `yaml` (plus the aliases
+> `sh`/`zsh`/`js`/`ts`/`yml`/`md`/`dockerfile`/`toml`). Add another grammar in
+> `src/components/CodeBlock.tsx` if you need it.
 
 ### **Modifying Backend API:**
 1. Update models in `go-blog/internal/model/`
@@ -183,20 +200,37 @@ go run cmd/server/main.go
 4. Test with `go run cmd/server/main.go`
 
 ### **Styling Changes:**
-1. Modify `src/index.css` for global styles
-2. Update component-specific styles in Tailwind classes
-3. Custom cursor: `public/kunai.svg`
+1. Modify `src/index.css` for tokens, base styles and prose
+2. Update component-specific styles with Tailwind classes
+3. Add or change a theme token in `src/index.css` (`--c-*` under `:root` / `.dark`)
+   — colours are driven entirely by CSS variables, so light/dark follow for free
+
+### **Custom cursor / favicon:**
+`public/kunai.png` and `public/favicon-*.png` are rasters generated from the
+original artwork in `assets/` (which is *not* shipped, to keep the bundle small).
+Regenerate with:
+
+```bash
+inkscape --export-type=png --export-width=36 --export-height=36 \
+  --export-filename=public/kunai.png assets/kunai.svg
+inkscape --export-type=png --export-width=192 --export-height=192 \
+  --export-filename=public/favicon-192.png assets/sharingan-shisui.svg
+```
+
+The SVG sources are 100–670 kB each because they embed PNG textures, so they
+are kept out of `public/` deliberately.
 
 ---
 
 ## 🎉 **Current Achievements**
 
-✅ **Terminal-inspired design** with custom cursor  
+✅ **Terminal-inspired design** with custom cursor, dark **and** light themes  
 ✅ **Full-stack application** with React + Go  
-✅ **Scientific markdown support** with KaTeX  
+✅ **Neovim-style keyboard navigation** with an in-app `?` reference  
 ✅ **Interactive comments and ratings**  
 ✅ **Search and filtering** capabilities  
 ✅ **Responsive design** for all devices  
+✅ **Reduced-motion aware** animations  
 ✅ **Production-ready** architecture  
 ✅ **Comprehensive documentation**  
 

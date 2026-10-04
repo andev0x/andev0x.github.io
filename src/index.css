@@ -2,219 +2,385 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  cursor: url('/kunai.svg') 32 32, auto;
+/* ==========================================================================
+   Design tokens
+   Light is the default; `.dark` on <html> switches to the night palette.
+   Every value is a raw `R G B` triplet so Tailwind's `<alpha-value>` works
+   (`bg-surface/80`, `text-accent/60`, ...).
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  --c-canvas: 246 248 246;
+  --c-surface: 255 255 255;
+  --c-elevated: 255 255 255;
+  --c-border: 219 229 223;
+  --c-border-strong: 188 206 195;
+  --c-fg: 24 37 31;
+  --c-fg-muted: 92 111 102;
+  --c-fg-subtle: 133 150 141;
+  --c-accent: 15 122 74;
+  --c-accent-strong: 11 100 60;
+  --c-accent-soft: 224 240 231;
+  --c-on-accent: 255 255 255;
+  --c-overlay: 24 37 31;
+
+  --c-syn-comment: 122 145 133;
+  --c-syn-keyword: 15 122 74;
+  --c-syn-string: 158 106 20;
+  --c-syn-number: 30 100 160;
+  --c-syn-fn: 20 90 120;
+  --c-syn-punct: 90 108 100;
+  --c-syn-attr: 60 90 78;
+
+  --shadow-panel: 0 1px 2px rgb(24 37 31 / 0.04), 0 8px 24px -12px rgb(24 37 31 / 0.16);
+  --shadow-pop: 0 24px 60px -20px rgb(24 37 31 / 0.28);
+
+  --header-h: 3.5rem;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+.dark {
+  color-scheme: dark;
+
+  --c-canvas: 8 11 10;
+  --c-surface: 14 20 18;
+  --c-elevated: 21 29 26;
+  --c-border: 30 42 38;
+  --c-border-strong: 49 66 59;
+  --c-fg: 214 228 220;
+  --c-fg-muted: 138 158 148;
+  --c-fg-subtle: 96 116 107;
+  --c-accent: 126 231 135;
+  --c-accent-strong: 154 240 168;
+  --c-accent-soft: 26 48 37;
+  --c-on-accent: 6 22 14;
+  --c-overlay: 3 6 5;
+
+  --c-syn-comment: 110 134 122;
+  --c-syn-keyword: 126 231 135;
+  --c-syn-string: 236 214 140;
+  --c-syn-number: 138 199 233;
+  --c-syn-fn: 168 231 214;
+  --c-syn-punct: 150 172 162;
+  --c-syn-attr: 200 224 212;
+
+  --shadow-panel: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 24px 60px -20px rgb(0 0 0 / 0.7);
 }
 
-::-webkit-scrollbar-track {
-  background: #023400;
-}
+/* ==========================================================================
+   Base
+   ========================================================================== */
 
-::-webkit-scrollbar-thumb {
-  background: #00FF00;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #00FF88;
-}
-
-/* Selection */
-::selection {
-  background: #00FF00;
-  color: #023400;
-}
-
-/* Global styles */
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  color: #00FF00;
-  font-family: 'VT323', monospace;
-  overflow-x: hidden;
-  background-image: url('/bgr.png') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-}
-
-/* Terminal text effects */
-.terminal-text {
-  font-family: 'VT323', monospace;
-  text-shadow: 0 0 10px #00FF00;
-}
-
-.terminal-accent {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.7rem;
-}
-
-/* Hover effects */
-.hover-glow:hover {
-  text-shadow: 0 0 20px #00FF00, 0 0 30px #00FF00;
-  transition: text-shadow 0.3s ease;
-}
-
-/* Focus styles */
-.focus-glow:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px #00FF00;
-  text-shadow: 0 0 10px #00FF00;
-}
-
-/* Enhanced code blocks with better readability */
-pre {
-  background: #02340019 !important;
-  border: 1px solid #333333 !important;
-  border-radius: 8px !important;
-  padding: 1.5rem !important;
-  overflow-x: auto;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  line-height: 1.6;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-code {
-  background: #02340019;
-  color: #e0e0e0;
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  border: 1px solid #333333;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 0.9em;
-}
-
-/* Inline code in paragraphs */
-p code {
-  background: #02340019;
-  color: #00FF88;
-  border: 1px solid #02340019;
-}
-
-/* Code syntax highlighting classes */
-.code-keyword {
-  color: #f49223;
-  font-weight: bold;
-}
-
-.code-string {
-  color: #88FF88;
-}
-
-.code-comment {
-  color: #74125d;
-  font-style: italic;
-}
-
-.code-number {
-  color: #eaea48;
-}
-
-/* Better list styling */
-li {
-  margin-bottom: 0.5rem;
-  line-height: 1.6;
-}
-
-/* Improved paragraph spacing */
-p {
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-
-/* Better heading spacing and styling */
-h1, h2, h3, h4, h5, h6 {
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  line-height: 1.3;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-h1 {
-  font-size: 3rem;
-  margin-top: 2.5rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid rgba(0, 255, 0, 0.3);
-}
-
-h2 {
-  font-size: 2.5rem;
-  margin-top: 2rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.5rem;
-}
-
-h3 {
-  font-size: 2rem;
-  margin-top: 1.75rem;
-  margin-bottom: 1rem;
-}
-
-h4 {
-  font-size: 1.5rem;
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
-}
-
-h5 {
-  font-size: 1.25rem;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-}
-
-h6 {
-  font-size: 1.125rem;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-h1:first-child,
-h2:first-child,
-h3:first-child {
-  margin-top: 0;
-}
-
-/* Loading states */
-.loading-dots::after {
-  content: '';
-  animation: loading-dots 1.5s infinite;
-}
-
-@keyframes loading-dots {
-  0% { content: ''; }
-  25% { content: '.'; }
-  50% { content: '..'; }
-  75% { content: '...'; }
-  100% { content: ''; }
-}
-
-/* Responsive utilities */
-@media (max-width: 767px) {
-  .mobile-hidden {
-    display: none;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
   }
-  
-  pre {
-    padding: 1rem !important;
-    font-size: 0.85rem;
+
+  body {
+    @apply bg-canvas text-fg font-mono antialiased;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
   }
-  
-  code {
-    font-size: 0.8rem;
+
+  /* Custom kunai cursor. Declared once here instead of on `*` so the browser
+     does not have to re-resolve an image for every element.
+     The 36px PNG is generated from assets/kunai.svg (see README notes). */
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  [role='button'] {
+    cursor: url('/kunai.png') 4 2, auto;
+  }
+
+  ::selection {
+    background-color: rgb(var(--c-accent) / 0.28);
+    color: rgb(var(--c-fg));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-accent));
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* Scrollbars follow the theme. */
+  * {
+    scrollbar-color: rgb(var(--c-border-strong)) transparent;
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--c-border-strong));
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--c-accent) / 0.7);
   }
 }
 
-@media (min-width: 768px) {
-  .mobile-only {
-    display: none;
+/* ==========================================================================
+   Ambient background — two static radial washes plus a faint grid.
+   Painted once on a fixed layer, so scrolling never repaints it.
+   ========================================================================== */
+
+@layer components {
+  .app-shell {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .app-shell::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(60rem 40rem at 12% -8%, rgb(var(--c-accent) / 0.14), transparent 60%),
+      radial-gradient(48rem 36rem at 92% 4%, rgb(var(--c-accent) / 0.08), transparent 62%),
+      linear-gradient(rgb(var(--c-fg) / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--c-fg) / 0.035) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 3.5rem 3.5rem, 3.5rem 3.5rem;
+  }
+
+  .dark .app-shell::before {
+    background-image:
+      radial-gradient(60rem 40rem at 12% -8%, rgb(var(--c-accent) / 0.16), transparent 60%),
+      radial-gradient(48rem 36rem at 92% 4%, rgb(var(--c-accent) / 0.1), transparent 62%),
+      linear-gradient(rgb(var(--c-accent) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--c-accent) / 0.05) 1px, transparent 1px);
+  }
+
+  /* Display faces. VT323 for identity, JetBrains Mono for anything a human
+     has to actually read, Press Start 2P reserved for micro labels. */
+  .font-display {
+    font-family: 'VT323', ui-monospace, monospace;
+    letter-spacing: 0.01em;
+  }
+
+  .font-pixel {
+    font-family: 'Press Start 2P', ui-monospace, monospace;
+    line-height: 1.6;
+  }
+
+  .panel {
+    @apply border border-border bg-surface;
+    box-shadow: var(--shadow-panel);
+  }
+
+  .kbd {
+    @apply inline-flex min-w-[1.5rem] items-center justify-center rounded border border-border-strong
+           bg-elevated px-1.5 py-0.5 font-mono text-[0.7rem] leading-none text-fg-muted;
+  }
+
+  .eyebrow {
+    @apply font-pixel text-[0.6rem] uppercase tracking-[0.18em] text-fg-subtle;
+  }
+
+  .link {
+    @apply text-accent underline decoration-accent/40 underline-offset-4
+           transition-colors duration-150 hover:decoration-accent;
+  }
+
+  /* Blinking block cursor. Animates opacity only. */
+  .caret::after {
+    content: '\2588';
+    @apply ml-0.5 text-accent;
+    animation: caret-blink 1.1s steps(1, end) infinite;
+  }
+
+  @keyframes caret-blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    50.01%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* Panels entering the viewport. Transform + opacity only, so they stay on
+     the compositor. */
+  .enter {
+    animation: enter var(--dur-enter, 260ms) var(--ease-out) both;
+  }
+
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 8px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Long lists: skip layout/paint for cards that are off-screen. */
+  .defer-paint {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 168px;
+  }
+
+  /* ==========================================================================
+     Markdown prose
+     Hand-rolled: @tailwindcss/typography is not installed, so the previous
+     `prose-*` utility classes never produced any CSS.
+     ========================================================================== */
+
+  .prose {
+    @apply text-[0.95rem] leading-[1.75] text-fg;
+    overflow-wrap: break-word;
+  }
+
+  .prose > * + * {
+    margin-top: 1.15em;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    @apply font-display text-fg;
+    line-height: 1.2;
+    scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  }
+
+  .prose h1 {
+    @apply mt-0 text-3xl sm:text-4xl;
+  }
+  .prose h2 {
+    @apply text-2xl sm:text-3xl;
+  }
+  .prose h3 {
+    @apply text-xl sm:text-2xl;
+  }
+  .prose h4 {
+    @apply text-lg;
+  }
+
+  .prose h2,
+  .prose h3 {
+    @apply border-b border-border pb-2;
+  }
+
+  .prose p {
+    @apply text-fg/90;
+  }
+
+  .prose a {
+    @apply link;
+  }
+
+  .prose strong {
+    @apply font-semibold text-fg;
+  }
+
+  .prose em {
+    @apply italic text-fg/90;
+  }
+
+  .prose ul {
+    @apply list-disc space-y-1.5 pl-6 marker:text-accent;
+  }
+
+  .prose ol {
+    @apply list-decimal space-y-1.5 pl-6 marker:text-fg-subtle;
+  }
+
+  .prose li > ul,
+  .prose li > ol {
+    margin-top: 0.5em;
+  }
+
+  .prose blockquote {
+    @apply border-l-2 border-accent/50 bg-accent/[0.06] py-2 pl-4 pr-3 italic text-fg-muted;
+    border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0;
+  }
+
+  .prose hr {
+    @apply border-border;
+  }
+
+  .prose img {
+    @apply rounded-lg border border-border;
+  }
+
+  .prose table {
+    @apply block w-full overflow-x-auto border-collapse text-sm;
+  }
+
+  .prose th,
+  .prose td {
+    @apply border border-border px-3 py-2 text-left;
+  }
+
+  .prose th {
+    @apply bg-elevated font-semibold;
+  }
+
+  /* Inline code. Block code is styled by the highlighter itself. */
+  .prose :not(pre) > code {
+    @apply rounded border border-border bg-elevated px-1.5 py-0.5 text-[0.85em] text-accent;
+  }
+
+  .prose pre {
+    @apply overflow-x-auto rounded-xl border border-border bg-elevated p-4 text-[0.85rem] leading-relaxed;
+    scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  }
+
+  .prose pre code {
+    @apply border-0 bg-transparent p-0 text-inherit;
+  }
+
+  /* Code block header injected by CodeBlock. */
+  .code-frame {
+    @apply my-6 overflow-hidden rounded-xl border border-border bg-elevated;
+  }
+
+  .code-frame pre {
+    @apply my-0 rounded-none border-0 bg-transparent;
+  }
+}
+
+/* ==========================================================================
+   Motion preferences
+   Honour the OS setting globally: keep state changes instant instead of
+   animating them.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .defer-paint {
+    content-visibility: visible;
   }
 }

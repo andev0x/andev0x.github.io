@@ -1,52 +1,43 @@
 import React from 'react';
-import { Terminal, Github, Bird, Rocket } from 'lucide-react';
+import { Github, Rss, Send } from 'lucide-react';
 
-export const Footer: React.FC = () => {
-  return (
-    <footer className="border-t border-terminal-green/30 py-6 mt-12">
-      <div className="container mx-Rocket px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="flex items-center space-x-4">
-            <Terminal className="text-terminal-green" size={24} />
-            <div>
-              <div className="text-terminal-green font-vt323 text-xl">andev0x</div>
-              <div className="text-terminal-green/60 terminal-accent text-xs">
-                Terminal-inspired tech blog
-              </div>
-            </div>
-          </div>
+const LINKS = [
+  { href: 'https://github.com/andev0x', label: 'GitHub', icon: Github },
+  { href: 'https://bsky.app/profile/anvndev.bsky.social', label: 'Bluesky', icon: Send },
+  { href: 'https://mastodon.social/@anvndev', label: 'Mastodon', icon: Rss },
+];
 
-          <div className="flex items-center space-x-6">
-            <a
-              href="https://github.com/andev0x"
-              className="text-terminal-green hover-glow transition-colors"
-              aria-label="GitHub"
-            >
-              <Github size={20} />
-            </a>
-            <a
-              href="https://bsky.app/profile/anvndev.bsky.social"
-              className="text-terminal-green hover-glow transition-colors"
-              aria-label="Bluesky"
-            >
-              <Bird size={20} />
-            </a>
-            <a
-              href="https://mastodon.social/@anvndev"
-              className="text-terminal-green hover-glow transition-colors"
-              aria-label="Mastodon"
-            >
-              <Rocket size={20} />
-            </a>
-          </div>
-        </div>
-
-        <div className="mt-6 pt-4 border-t border-terminal-green/20 text-center">
-          <div className="text-terminal-green/60 terminal-accent text-xs">
-            © 2025 andev0x. All rights reserved.
-          </div>
-        </div>
+export const Footer: React.FC = () => (
+  <footer className="mt-16 border-t border-border">
+    <div className="container flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
+      <div>
+        <p className="font-display text-xl text-fg">andev0x</p>
+        <p className="mt-0.5 font-mono text-[0.68rem] text-fg-subtle">
+          keyboard-first notes on software and systems
+        </p>
       </div>
-    </footer>
-  );
-};
+
+      <ul className="flex items-center gap-1">
+        {LINKS.map(({ href, label, icon: Icon }) => (
+          <li key={label}>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer me"
+              aria-label={label}
+              className="grid h-9 w-9 place-items-center rounded-md border border-transparent text-fg-muted transition-colors duration-150 hover:border-border hover:bg-elevated hover:text-accent"
+            >
+              <Icon size={16} strokeWidth={1.75} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div className="container pb-10">
+      <p className="font-mono text-[0.65rem] text-fg-subtle">
+        © {new Date().getFullYear()} andev0x · built with react + tailwind
+      </p>
+    </div>
+  </footer>
+);

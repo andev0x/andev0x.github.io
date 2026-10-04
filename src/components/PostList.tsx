@@ -1,75 +1,71 @@
-import React, { useState } from 'react';
-import { SearchResult } from '../types';
+import React, { useEffect, useRef } from 'react';
+import type { PostMeta, SearchResult } from '../types';
 import { PostCard } from './PostCard';
-import { BlogPost } from '../types';
+import { revealElement } from '../utils/scroll';
 
 interface PostListProps {
   posts: SearchResult[];
-  onPostClick: (post: BlogPost) => void;
-  toggleMode?: boolean;
-  selectedIndex?: number;
+  query: string;
+  cursorIndex: number;
+  onOpen: (post: PostMeta) => void;
+  onClearFilters: () => void;
+  hasFilters: boolean;
 }
 
-export const PostList: React.FC<PostListProps> = ({ 
-  posts, 
-  onPostClick, 
-  toggleMode = false, 
-  selectedIndex = 0 
+/**
+ * The full result set is rendered — the previous build capped the list at three
+ * entries behind a "See more" button, which also made the `j`/`k` cursor
+ * unreachable for most of the archive.
+ */
+export const PostList: React.FC<PostListProps> = ({
+  posts,
+  query,
+  cursorIndex,
+  onOpen,
+  onClearFilters,
+  hasFilters,
 }) => {
-  const [showAll, setShowAll] = useState(false);
-  const visiblePosts = showAll ? posts : posts.slice(0, 3);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  // Keep the cursor card in view as it moves, scoped to this list rather than
+  // querying the whole document.
+  useEffect(() => {
+    revealElement(listRef.current?.querySelector<HTMLElement>('[data-cursor]') ?? null, 'center');
+  }, [cursorIndex]);
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="text-terminal-green/60 font-vt323 text-xl">
-          No posts found
-        </div>
-        <div className="text-terminal-green/40 terminal-accent text-sm mt-2">
-          Try adjusting your search or category filter
-        </div>
+      <div className="panel rounded-xl px-6 py-12 text-center">
+        <p className="font-display text-2xl text-fg">no posts found</p>
+        <p className="mt-1 font-mono text-xs text-fg-subtle">
+          nothing matches the current search or filter
+        </p>
+        {hasFilters && (
+          <button
+            type="button"
+            onClick={onClearFilters}
+            className="mt-4 rounded-md border border-accent/50 px-3 py-1.5 font-mono text-xs text-accent transition-colors hover:bg-accent/10"
+          >
+            reset filters
+          </button>
+        )}
       </div>
     );
   }
 
   return (
-    <>
-      <div className="grid gap-6 md:gap-8">
-        {visiblePosts.map((result, index) => (
-          <div
-            key={result.item.id}
-            data-post-index={index}
-            className={`animate-slide-up ${
-              toggleMode && index === selectedIndex 
-                ? 'ring-2 ring-terminal-green ring-opacity-60 bg-terminal-green/10 rounded-lg p-2' 
-                : ''
-            }`}
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            <PostCard post={result.item} matches={result.matches} onClick={() => onPostClick(result.item)} />
-          </div>
-        ))}
-      </div>
-      {posts.length > 3 && !showAll && (
-        <div className="flex justify-center mt-8">
-          <button
-            className="px-6 py-2 rounded bg-terminal-green text-terminal-black font-vt323 text-lg hover-glow transition-colors border border-terminal-green/60"
-            onClick={() => setShowAll(true)}
-          >
-            See More
-          </button>
-        </div>
-      )}
-      {showAll && posts.length > 3 && (
-        <div className="flex justify-center mt-4">
-          <button
-            className="px-6 py-2 rounded bg-terminal-black text-terminal-green font-vt323 text-lg hover-glow transition-colors border border-terminal-green/60"
-            onClick={() => setShowAll(false)}
-          >
-            Show Less
-          </button>
-        </div>
-      )}
-    </>
+    <ul ref={listRef} className="space-y-3">
+      {posts.map((result, index) => (
+        <li key={result.item.id}>
+          <PostCard
+            post={result.item}
+            index={index}
+            query={query}
+            isCursor={index === cursorIndex}
+            onOpen={onOpen}
+          />
+        </li>
+      ))}
+    </ul>
   );
 };
