@@ -3,28 +3,27 @@ title: "Installing NixOS ARM64 with Hyprland on Apple Silicon (VMware Fusion) �
 slug: "nixos-arm64-hyprland-apple-silicon"
 date: "2025-09-24"
 tags: [nixos, arm64, apple-silicon, hyprland, wayland, vmware]
-categories: ["Tutorial", "Linux"]
+categories: ["Guides", "Linux"]
 excerpt: "Step-by-step guide to installing NixOS ARM64 on Apple Silicon with VMware Fusion, configuring partitions, setting up Hyprland, and deploying a flake-based configuration."
-readingTime: 12
-featured: true
+readingTime: 3
+featured: false
 ---
-
 # Installing NixOS ARM64 with Hyprland on Apple Silicon (VMware Fusion) — Complete Guide
 
 > This guide provides a detailed walkthrough for installing NixOS ARM64 on Apple Silicon (M1/M2) using VMware Fusion, setting up partitions, enabling networking, and configuring Hyprland with a flake-based setup optimized for development.
 
-## 1. Preparation
+## Preparation
 
 **Requirements:**
 
-* macOS with [VMware Fusion](https://www.vmware.com/products/fusion.html) installed
-* NixOS Minimal ISO (ARM64/aarch64)
-* Basic familiarity with Linux command line
-* Optional: your own flake or dotfiles repository for customization
+- macOS with [VMware Fusion](https://www.vmware.com/products/fusion.html) installed
+- NixOS Minimal ISO (ARM64/aarch64)
+- Basic familiarity with Linux command line
+- Optional: your own flake or dotfiles repository for customization
 
 **Tip:** Create a VM in VMware Fusion with at least **4GB RAM** and **20GB disk**. Choose **aarch64** architecture for Apple Silicon.
 
-## 2. Booting NixOS Minimal ISO
+## Booting NixOS Minimal ISO
 
 1. Create a new VM in VMware Fusion.
 2. Attach the NixOS Minimal ARM64 ISO as the boot disk.
@@ -42,9 +41,9 @@ Check disk layout:
 lsblk
 ```
 
-On Apple Silicon with NVMe, you’ll usually see `/dev/nvme0n1`.
+On Apple Silicon with NVMe, you'll usually see `/dev/nvme0n1`.
 
-## 3. Partitioning & Formatting
+## Partitioning & Formatting
 
 Use `cfdisk` to create partitions:
 
@@ -54,9 +53,9 @@ cfdisk /dev/nvme0n1
 
 Partition scheme:
 
-* **EFI System** – 1G
-* **Swap** – 4G
-* **Linux filesystem** – remaining space
+- **EFI System** – 1G
+- **Swap** – 4G
+- **Linux filesystem** – remaining space
 
 Format partitions:
 
@@ -74,7 +73,7 @@ mount --mkdir /dev/nvme0n1p1 /mnt/boot
 swapon /dev/nvme0n1p2
 ```
 
-## 4. Generate NixOS Configuration
+## Generate NixOS Configuration
 
 ```bash
 nixos-generate-config --root /mnt
@@ -82,10 +81,10 @@ nixos-generate-config --root /mnt
 
 This creates:
 
-* `/mnt/etc/nixos/configuration.nix`
-* `/mnt/etc/nixos/hardware-configuration.nix`
+- `/mnt/etc/nixos/configuration.nix`
+- `/mnt/etc/nixos/hardware-configuration.nix`
 
-## 5. Basic System Configuration
+## Basic System Configuration
 
 Edit `configuration.nix`:
 
@@ -124,7 +123,7 @@ Edit `configuration.nix`:
 }
 ```
 
-## 6. Install NixOS
+## Install NixOS
 
 ```bash
 nixos-install
@@ -138,7 +137,7 @@ reboot
 
 Remove ISO and boot from the virtual disk.
 
-## 7. Deploying with Flakes
+## Deploying with Flakes
 
 Clone your flake repo:
 
@@ -161,34 +160,34 @@ Or run the provided script:
 ./deploy.sh
 ```
 
-## 8. Hyprland Setup
+## Hyprland Setup
 
 Hyprland comes pre-configured in this setup with Nord theme, Waybar, and Kitty terminal.
 
 **Key bindings:**
 
-* `Super + Q`: Open Kitty
-* `Super + C`: Close window
-* `Super + R`: Wofi launcher
-* `Super + T`: Neovim in terminal
-* `Super + B`: Firefox
+- `Super + Q`: Open Kitty
+- `Super + C`: Close window
+- `Super + R`: Wofi launcher
+- `Super + T`: Neovim in terminal
+- `Super + B`: Firefox
 
 You can customize configs in:
 
-* `home/hypr/hyprland.conf`
-* `home/waybar/config`
+- `home/hypr/hyprland.conf`
+- `home/waybar/config`
 
-## 9. Development Environment
+## Development Environment
 
 Pre-installed tools:
 
-* Editors: Neovim, VS Code, Helix
-* Languages: Go, Rust, Python, Node.js, Deno
-* Git Tools: LazyGit, Delta, Gitui
-* Utilities: ripgrep, fd, fzf, bat, exa, tree
-* Browsers: Firefox, Chromium, Brave, Qute
+- Editors: Neovim, VS Code, Helix
+- Languages: Go, Rust, Python, Node.js, Deno
+- Git Tools: LazyGit, Delta, Gitui
+- Utilities: ripgrep, fd, fzf, bat, exa, tree
+- Browsers: Firefox, Chromium, Brave, Qute
 
-## 10. Troubleshooting
+## Troubleshooting
 
 - **Build fails** → Check Nix version and flake compatibility.
 - **Display issues** → Verify VMware Fusion tools.
@@ -204,6 +203,8 @@ journalctl -u hyprland
 ## Conclusion
 
 You now have a fully functional NixOS ARM64 system running on Apple Silicon via VMware Fusion, complete with Hyprland, Nord theming, and a developer-ready environment. From here, you can tweak your flake configs, extend development tools, or port this setup to bare-metal Asahi Linux.
+
+[![Neovim](https://img.shields.io/badge/link-fnixos-blue)](https://github.com/andev0x/fnixos)
 
 ---
 

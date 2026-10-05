@@ -47,7 +47,7 @@ I'm always building, learning, and refining.
 ## Connect With Me
 
 - GitHub: [@andev0x](https://github.com/andev0x)
-- Website: [anvndev.github.io](https://anvndev.github.io)
+- Website: [andev0x.github.io](https://andev0x.github.io)
 - Reach out: Open for collaboration and ideas!
 
 Thanks for stopping by!
@@ -57,4 +57,4 @@ Feel free to explore my projects, give feedback, or just say hi.
 ---
 
 **Written by:** [andev0x](https://github.com/andev0x)  
-**Last updated:** July 1, 2025
+* Last updated:** July 1, 2025

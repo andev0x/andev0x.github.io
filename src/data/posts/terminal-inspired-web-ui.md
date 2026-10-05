@@ -3,15 +3,14 @@ title: "Building a Terminal-Inspired Web Interface"
 slug: "terminal-inspired-web-ui"
 date: "2025-01-15"
 tags: [web-dev, ui-design, terminal]
-categories: ["Development"]
-excerpt: "In this post, we'll explore how to create a web interface that captures the essence of terminal computing while maintaining modern usability."
-readingTime: 5
-featured: true
+categories: ["Frontend", "Design"]
+excerpt: "Explore how to create a web interface that captures the essence of terminal computing while maintaining modern usability."
+readingTime: 1
+featured: false
 ---
-
 # Building a Terminal-Inspired Web Interface
 
-In this post, we'll explore how to create a web interface that captures the essence of terminal computing while maintaining modern usability.
+> In this post, we'll explore how to create a web interface that captures the essence of terminal computing while maintaining modern usability.
 
 ## Goals
 
@@ -26,23 +25,23 @@ Creating a terminal-inspired interface requires balancing nostalgia with functio
 
 We use a carefully selected palette:
 
-- *Background:* `#0a0a0a` (near-black)  
-- *Primary:* `#00FF00` (neon green)  
-- *Accents:* Various shades of green  
+- *Background:* `#0a0a0a` (near-black)
+- *Primary:* `#00FF00` (neon green)
+- *Accents:* Various shades of green
 
 ## Typography
 
-- *VT323* for body text and headings  
-- *Press Start 2P* for UI accents  
-- *Monospace* for code blocks  
+- *VT323* for body text and headings
+- *Press Start 2P* for UI accents
+- *Monospace* for code blocks
 
 ## Vim-style Navigation
 
 Vim-style keyboard controls enhance the terminal experience:
 
-- `j` / `k` for scrolling  
-- `g` / `G` for top/bottom navigation  
-- `/` to activate search  
+- `j` / `k` for scrolling
+- `g` / `G` for top/bottom navigation
+- `/` to activate search
 
 ```javascript
 // Example keyboard handler
@@ -64,4 +63,4 @@ const handleKeyDown = (event) => {
 ---
 
 **Written by:** [andev0x](https://github.com/andev0x)  
-**Last updated:** July 16, 2025
+**Last updated:** January 15, 2025

@@ -63,6 +63,10 @@ This means you can:
 - Query production-like databases
 - Debug issues without switching tools
 
+## Demo
+
+![Guts terminal interface demonstration](https://raw.githubusercontent.com/andev0x/description-image-archive/refs/heads/main/guts/guts.gif)
+
 ## Navigation — Inspired by Vim
 
 One of the core design decisions:
@@ -186,7 +190,7 @@ Getting started is simple.
 
 ```bash
 brew tap andev0x/tap
-brew install gutst
+brew install guts
 ```
 
 ### Example Usage

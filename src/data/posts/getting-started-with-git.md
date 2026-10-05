@@ -2,19 +2,17 @@
 title: "Getting Started with Git: A Beginner-Friendly Guide"
 slug: "getting-started-with-git"
 date: "2025-07-01"
-author: "andev0x"
-tags: ["git", "version-control", "beginner"]
-categories: ["Code", "Tools"]
+tags: [git, version-control, beginner]
+categories: ["Guides", "Developer Experience"]
 excerpt: "A concise and beginner-friendly guide to understanding and using Git, the essential tool for version control in software development."
-readingTime: 1
+readingTime: 2
 featured: false
 ---
-
 # Getting Started with Git: A Beginner-Friendly Guide
 
-**Git is the backbone of modern software collaboration. Whether you're a solo coder or part of a team, knowing Git is essential.**
+> Git is the backbone of modern software collaboration. Whether you're a solo coder or part of a team, knowing Git is essential.
 
-## _What is Git?_
+## What is Git?
 
 **Git** is a free and open-source distributed version control system. It helps you track changes, collaborate with others, and revert to previous versions of your code — from small personal projects to large-scale systems.
 
@@ -34,7 +32,6 @@ sudo apt install git
 ```
 
 - **Windows:**
-
   Download and install from [https://git-scm.com/download/win](https://git-scm.com/download/win)
 
 ## Basic Configuration
@@ -59,10 +56,10 @@ git commit -m "Initial commit"    # Make your first commit
 1. Create a new repository on GitHub
 2. Link it to your local repo:
 
-   ```bash
-   git remote add origin https://github.com/yourusername/repo.git
-   git push -u origin main
-   ```
+```bash
+git remote add origin https://github.com/yourusername/repo.git
+git push -u origin main
+```
 
 ## Daily Git Commands
 
@@ -80,45 +77,45 @@ git commit -m "Initial commit"    # Make your first commit
 
 - Clone a repository:
 
-  ```bash
-  git clone https://github.com/username/repo.git
-  ```
+```bash
+git clone https://github.com/username/repo.git
+```
 
 - Pull the latest changes:
 
-  ```bash
-  git pull origin main
-  ```
+```bash
+git pull origin main
+```
 
 - Resolve merge conflicts:
 
-  1. Edit the conflicting files
-  2. Stage the resolved file:
+1. Edit the conflicting files
+2. Stage the resolved file:
 
-     ```bash
-     git add conflict-file.js
-     git commit -m "Resolved merge conflict"
-     ```
+```bash
+git add conflict-file.js
+git commit -m "Resolved merge conflict"
+```
 
 ## Bonus Tips
 
 - Undo last commit but keep changes:
 
-  ```bash
-  git reset --soft HEAD~1
-  ```
+```bash
+git reset --soft HEAD~1
+```
 
 - Unstage a file:
 
-  ```bash
-  git reset filename.txt
-  ```
+```bash
+git reset filename.txt
+```
 
 - View history of a file:
 
-  ```bash
-  git log -- filename.txt
-  ```
+```bash
+git log -- filename.txt
+```
 
 ## Resources
 
