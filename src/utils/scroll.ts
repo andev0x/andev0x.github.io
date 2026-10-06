@@ -24,3 +24,33 @@ export const revealElement = (
 ): void => {
   element?.scrollIntoView({ behavior: motion(), block });
 };
+
+/**
+ * Scroll to a heading by id without touching `location.hash`.
+ * Post routes live in the fragment (`#/post/<id>`), so a plain `href="#slug"`
+ * would replace the route and break share/reload/back — scroll instead and
+ * leave the URL intact. `scroll-margin-top` on the prose headings accounts
+ * for the sticky header.
+ *
+ * Retries briefly when the target is not in the DOM yet: the TOC renders as
+ * soon as the Markdown string arrives, while the heading elements appear only
+ * after the lazy `Markdown` chunk resolves — a click in that window would
+ * otherwise silently do nothing.
+ */
+export const scrollToId = (id: string): void => {
+  const target = document.getElementById(id);
+  if (target) {
+    target.scrollIntoView({ behavior: motion(), block: 'start' });
+    return;
+  }
+  let attempts = 0;
+  const retry = (): void => {
+    const late = document.getElementById(id);
+    if (late) {
+      late.scrollIntoView({ behavior: motion(), block: 'start' });
+      return;
+    }
+    if (++attempts < 10) requestAnimationFrame(retry);
+  };
+  requestAnimationFrame(retry);
+};

@@ -6,6 +6,7 @@ import { scrollToTop } from '../utils/scroll';
 import { loadPostContent } from '../data/posts';
 import { CommentSection } from './CommentSection';
 import { RelatedArticles } from './RelatedArticles';
+import { TableOfContents } from './TableOfContents';
 
 /**
  * react-markdown plus the Prism grammars live in their own chunk, fetched the
@@ -131,9 +132,12 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack, onOpenPost
         ) : content === null ? (
           <ArticleSkeleton />
         ) : (
-          <Suspense fallback={<ArticleSkeleton />}>
-            <Markdown content={content} />
-          </Suspense>
+          <>
+            <TableOfContents content={content} />
+            <Suspense fallback={<ArticleSkeleton />}>
+              <Markdown content={content} />
+            </Suspense>
+          </>
         )}
 
         {/* Before the comment section, not after it: this is still part of
