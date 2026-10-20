@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import type { PostMeta, SearchResult } from '../types';
 import { PostCard } from './PostCard';
 import { revealElement } from '../utils/scroll';
@@ -26,7 +26,7 @@ interface PostListProps {
  * entries behind a "See more" button, which also made the `j`/`k` cursor
  * unreachable for most of the archive.
  */
-export const PostList: React.FC<PostListProps> = ({
+const PostListBase: React.FC<PostListProps> = ({
   posts,
   query,
   cursorIndex,
@@ -79,3 +79,6 @@ export const PostList: React.FC<PostListProps> = ({
     </ul>
   );
 };
+
+
+export const PostList = memo(PostListBase);

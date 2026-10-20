@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
 import docker from 'react-syntax-highlighter/dist/esm/languages/prism/docker';
@@ -87,7 +87,7 @@ interface CodeBlockProps {
   language?: string;
 }
 
-export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
+const CodeBlockBase: React.FC<CodeBlockProps> = ({ code, language }) => {
   const [copied, setCopied] = useState(false);
 
   const resolved = language ? ALIASES[language.toLowerCase()] ?? language.toLowerCase() : undefined;
@@ -141,3 +141,6 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
     </div>
   );
 };
+
+
+export const CodeBlock = memo(CodeBlockBase);

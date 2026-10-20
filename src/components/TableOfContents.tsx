@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { ChevronDown, ListTree } from 'lucide-react';
 import { extractHeadings } from '../utils/toc';
 import { scrollToId } from '../utils/scroll';
@@ -14,7 +14,7 @@ interface TableOfContentsProps {
  * Hidden when the post has fewer than two sections — a one-item TOC adds
  * chrome without orientation value.
  */
-export const TableOfContents: React.FC<TableOfContentsProps> = ({ content }) => {
+const TableOfContentsBase: React.FC<TableOfContentsProps> = ({ content }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const headings = useMemo(() => extractHeadings(content), [content]);
@@ -84,4 +84,5 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ content }) => 
   );
 };
 
+export const TableOfContents = memo(TableOfContentsBase);
 export default TableOfContents;
