@@ -56,10 +56,23 @@ const estimateReadingTime = (body: string): number =>
  */
 export function postsPlugin(): Plugin {
   let root = process.cwd()
+  let isBuild = false
+
+  // Parsed posts are immutable for the lifetime of one build, so cache them
+  // instead of re-reading and re-parsing every markdown file on each
+  // virtual-module load. In dev (serve) we must NOT cache: markdown edits
+  // have to be re-read on the next load, otherwise HMR serves stale bodies.
+  let cachedPosts: Array<PostMeta & { file: string; body: string }> | null = null
+  let cachedRoot: string | null = null
 
   const readPosts = (): Array<PostMeta & { file: string; body: string }> => {
+    if (isBuild && cachedPosts !== null && cachedRoot === root) return cachedPosts
+
     const absoluteDir = path.resolve(root, POSTS_DIR)
-    if (!fs.existsSync(absoluteDir)) return []
+    if (!fs.existsSync(absoluteDir)) {
+      if (isBuild) { cachedPosts = []; cachedRoot = root }
+      return []
+    }
 
     const posts = fs
       .readdirSync(absoluteDir)
@@ -86,10 +99,12 @@ export function postsPlugin(): Plugin {
       })
 
     // Newest first. The list view relies on this order.
-    return posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    const sorted = posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    if (isBuild) { cachedPosts = sorted; cachedRoot = root }
+    return sorted
   }
 
-  const generateManifest = (posts: Array<PostMeta & { file: string }>): string => {
+  const generateManifest = (posts: Array<PostMeta & { file: string; body: string }>): string => {
     const loaders = posts
       .map(
         (post) =>
@@ -101,7 +116,7 @@ export function postsPlugin(): Plugin {
 
     return [
       `export const posts = ${JSON.stringify(
-        posts.map(({ file: _file, ...meta }) => meta),
+        posts.map(({ file: _file, body: _body, ...meta }) => meta),
       )};`,
       '',
       '/** Each post body is a separate chunk, fetched only when opened. */',
@@ -123,6 +138,7 @@ export function postsPlugin(): Plugin {
     name: 'andev0x:posts',
     configResolved(config) {
       root = config.root
+      isBuild = config.command === 'build'
     },
 
     resolveId(id) {
