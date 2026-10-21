@@ -20,7 +20,7 @@ const tagKey = (tag: string): string => tag.toLowerCase().replace(/[^a-z0-9]+/g,
  * Tags two posts share. Returns the *current* post's spelling, so a label shown
  * to the reader is always one they have actually seen on the page they are on.
  */
-export const sharedTags = (post: PostMeta, other: PostMeta): string[] => {
+const sharedTags = (post: PostMeta, other: PostMeta): string[] => {
   const keys = new Set(other.tags.map(tagKey));
   return post.tags.filter((tag) => keys.has(tagKey(tag)));
 };
@@ -106,9 +106,10 @@ export const reasonFor = (post: PostMeta, other: PostMeta): Recommendation['reas
 /**
  * Posts related to `post`, strongest first, each with the reason it qualified.
  *
- * Deliberately not Fuse. The signal available here is metadata the post already
- * declares about itself, so an exact overlap beats a fuzzy title score — and the
- * result stays deterministic, where a Fuse index reshuffles as the corpus grows.
+ * Deliberately not the search scorer. The signal available here is metadata
+ * the post already declares about itself, so an exact overlap beats a fuzzy
+ * title score — and the result stays deterministic, where a search index
+ * reshuffles as the corpus grows.
  *
  * Two signals were measured against the real corpus and rejected rather than
  * added on instinct:

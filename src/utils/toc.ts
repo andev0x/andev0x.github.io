@@ -2,6 +2,14 @@ export interface TocEntry {
   id: string;
   text: string;
   depth: number;
+  /**
+   * 1-based line of the heading in the source markdown.
+   *
+   * The renderer looks the anchor id up by this line, so the id on the
+   * heading and the id in the table of contents come from the same entry and
+   * cannot drift apart.
+   */
+  line: number;
 }
 
 export const slugify = (value: string): string =>
@@ -36,10 +44,18 @@ export const uniqueSlug = (base: string, seen: Map<string, number>): string => {
 };
 
 /**
- * Extract h2–h4 headings from raw Markdown. h1 is the post title itself, so
- * it is excluded from the returned entries — but it still participates in
- * dedup counting so suffixes match `Markdown`, which slugs every level into
- * one shared scope (`overview`, `overview-1`, …).
+ * Extract the headings from raw Markdown, in document order.
+ *
+ * h1 is the post title itself, so the table of contents leaves it out — but it
+ * still participates in dedup counting, so suffixes match the rendered
+ * headings (`overview`, `overview-1`, …).
+ *
+ * This is the single source of truth for anchor ids: the table of contents
+ * renders these entries, and the Markdown renderer looks the same ids up by
+ * line number. Deriving the ids in one place is what keeps a TOC link from
+ * pointing at an id that is not on the page — a class of bug that a
+ * render-order slugger cannot avoid, because the order it sees depends on
+ * whether React re-renders the tree or starts from scratch.
  *
  * Fenced code blocks are tracked with CommonMark rules (backtick *and* tilde
  * fences, info strings, closing fence must be the same character, at least as
@@ -56,7 +72,8 @@ export const extractHeadings = (content: string): TocEntry[] => {
   let fenceChar = '';
   let fenceLen = 0;
 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const fence = /^( {0,3})(`{3,}|~{3,})(.*)$/.exec(line);
     if (fence) {
       const run = fence[2];
@@ -87,11 +104,14 @@ export const extractHeadings = (content: string): TocEntry[] => {
     const base = slugify(text);
     if (!base) continue;
 
-    const id = uniqueSlug(base, seen);
-    if (depth < 2) continue;
-
-    entries.push({ id, text, depth });
+    entries.push({ id: uniqueSlug(base, seen), text, depth, line: i + 1 });
   }
 
   return entries;
 };
+
+/**
+ * The table of contents itself: everything below the post title.
+ */
+export const tableOfContents = (headings: TocEntry[]): TocEntry[] =>
+  headings.filter((entry) => entry.depth >= 2);

@@ -3,12 +3,12 @@ import type React from 'react';
 /**
  * Highlight the search terms in a field.
  *
- * Highlighting is deliberately *exact* rather than reusing Fuse's fuzzy match
- * ranges: bitap reports scattered low-confidence fragments for a long query
- * ("Un", "erst", "ent" for "kubernetes"), which shredded the title. Fuse is
- * still what decides ranking and recall — the marks only confirm to the reader
- * where the literal term sits. Multi-word queries highlight each word, which is
- * what people expect.
+ * Highlighting is deliberately *exact* rather than reusing the fuzzy match
+ * ranges: approximate matching reports scattered low-confidence fragments for
+ * a long query ("Un", "erst", "ent" for "kubernetes"), which shredded the
+ * title. The search itself still decides ranking and recall — the marks only
+ * confirm to the reader where the literal term sits. Multi-word queries
+ * highlight each word, which is what people expect.
  *
  * Shared by `PostCard` and the search popup so both mark a hit identically.
  */

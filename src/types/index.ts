@@ -12,14 +12,10 @@ export interface PostMeta {
   featured: boolean;
 }
 
-/** A post whose markdown body has been loaded. */
-export interface Post extends PostMeta {
-  content: string;
-}
-
 /**
  * A search hit. Deliberately carries no fuzzy match ranges — highlighting is
- * done from the raw query (see `PostCard`), so Fuse never has to compute them.
+ * done from the raw query (see `PostCard`), so the search never has to
+ * compute them.
  */
 export interface SearchResult {
   item: PostMeta;
@@ -32,12 +28,3 @@ export interface CategoryCount {
 }
 
 export type Theme = 'light' | 'dark';
-
-export interface Comment {
-  id: string;
-  postId: string;
-  author: string;
-  content: string;
-  createdAt: string;
-  rating?: number;
-}

@@ -1,25 +1,28 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { ChevronDown, ListTree } from 'lucide-react';
-import { extractHeadings } from '../utils/toc';
+import { tableOfContents, type TocEntry } from '../utils/toc';
 import { scrollToId } from '../utils/scroll';
 
 interface TableOfContentsProps {
-  content: string;
+  /** Every heading in the post, in document order. */
+  headings: TocEntry[];
 }
 
 /**
- * Collapsible table of contents for the article body. Parses h2–h4 headings
- * from the raw Markdown (ids match `Markdown` via the shared slugger) and
- * renders anchor links, so readers get a quick overview of the main points.
+ * Collapsible table of contents for the article body. The headings are
+ * extracted from the raw Markdown by the caller (see `PostDetail`), so the
+ * table of contents and the anchor ids on the headings come from the same
+ * entries and always agree. Renders anchor links, so readers get a quick
+ * overview of the main points.
  * Hidden when the post has fewer than two sections — a one-item TOC adds
  * chrome without orientation value.
  */
-const TableOfContentsBase: React.FC<TableOfContentsProps> = ({ content }) => {
+const TableOfContentsBase: React.FC<TableOfContentsProps> = ({ headings }) => {
   const [isOpen, setIsOpen] = useState(true);
 
-  const headings = useMemo(() => extractHeadings(content), [content]);
+  const entries = tableOfContents(headings);
 
-  if (headings.length < 2) return null;
+  if (entries.length < 2) return null;
 
   const panelId = 'article-toc';
 
@@ -37,13 +40,15 @@ const TableOfContentsBase: React.FC<TableOfContentsProps> = ({ content }) => {
       >
         <ListTree size={14} strokeWidth={2} aria-hidden="true" className="shrink-0 text-accent" />
         <span className="flex-1">
-          contents <span className="text-fg-subtle">· {headings.length}</span>
+          contents <span className="text-fg-subtle">· {entries.length}</span>
         </span>
         <ChevronDown
           size={14}
           strokeWidth={2}
           aria-hidden="true"
-          className={`shrink-0 transition-transform duration-200 ease-out ${isOpen ? 'rotate-180' : ''}`}
+          className={`shrink-0 transition-transform duration-200 ease-out ${
+            isOpen ? 'rotate-180' : ''
+          }`}
         />
       </button>
 
@@ -56,7 +61,7 @@ const TableOfContentsBase: React.FC<TableOfContentsProps> = ({ content }) => {
       >
         <div className="overflow-hidden">
           <ol className="border-t border-border px-4 py-3">
-            {headings.map(({ id, text, depth }) => (
+            {entries.map(({ id, text, depth }) => (
               <li key={id}>
                 <a
                   href={`#${id}`}

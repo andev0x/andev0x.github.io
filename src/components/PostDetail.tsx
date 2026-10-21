@@ -1,10 +1,11 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Calendar, Clock, Folder, Tag } from 'lucide-react';
 import type { PostMeta } from '../types';
 import { formatLongDate } from '../utils/format';
 import { scrollToTop } from '../utils/scroll';
+import { extractHeadings } from '../utils/toc';
 import { loadPostContent } from '../data/posts';
-import { CommentSection } from './CommentSection';
+import { Comments } from './Comments';
 import { RelatedArticles } from './RelatedArticles';
 import { TableOfContents } from './TableOfContents';
 
@@ -36,6 +37,16 @@ interface PostDetailProps {
 export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack, onOpenPost }) => {
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  /**
+   * The post's headings, extracted once from the raw markdown.
+   *
+   * Both the table of contents and the anchor ids on the rendered headings
+   * come from this list, so a TOC entry can never point at an id that is not
+   * on the page. Parsing it once also means the markdown is walked a single
+   * time per post instead of once per consumer.
+   */
+  const headings = useMemo(() => (content ? extractHeadings(content) : []), [content]);
 
   useEffect(() => {
     let active = true;
@@ -133,9 +144,9 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack, onOpenPost
           <ArticleSkeleton />
         ) : (
           <>
-            <TableOfContents content={content} />
+            <TableOfContents headings={headings} />
             <Suspense fallback={<ArticleSkeleton />}>
-              <Markdown content={content} />
+              <Markdown content={content} headings={headings} />
             </Suspense>
           </>
         )}
@@ -145,8 +156,8 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, onBack, onOpenPost
         <RelatedArticles post={post} onOpen={onOpenPost} />
 
         <section className="mt-14">
-          <h2 className="mb-3 font-display text-2xl text-fg">rate &amp; comment</h2>
-          <CommentSection postId={post.id} />
+          <h2 className="mb-3 font-display text-2xl text-fg">comments</h2>
+          <Comments term={post.id} />
         </section>
 
         <footer className="mt-12 border-t border-border pt-6">

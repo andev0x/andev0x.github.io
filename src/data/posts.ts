@@ -11,28 +11,11 @@ export const posts: PostMeta[] = manifest;
 /** Lazily load the markdown body of a single post. */
 export { loadPostContent };
 
-const EMPTY_POST: PostMeta = {
-  id: '',
-  slug: '',
-  title: 'Not found',
-  excerpt: '',
-  date: '',
-  tags: [],
-  categories: [],
-  readingTime: 1,
-  featured: false,
-};
-
-export const getPostById = (id: string): PostMeta =>
-  posts.find((post) => post.id === id) ?? EMPTY_POST;
-
 /**
- * Same lookup, but honest about a miss.
+ * Look up a post by id.
  *
- * `getPostById` cannot express "no such post" — it substitutes a placeholder so
- * components always get a renderable object. Deep links need the opposite: a
- * shared URL can name a post that no longer exists, and that has to be
- * distinguishable from "the empty post was requested".
+ * Returns `null` for a miss: a shared URL can name a post that no longer
+ * exists, and that has to be distinguishable from a real result.
  */
 export const findPostById = (id: string): PostMeta | null =>
   posts.find((post) => post.id === id) ?? null;

@@ -1,6 +1,6 @@
-import { useCallback, useDeferredValue, useMemo, useState } from 'react';
-import Fuse from 'fuse.js';
+import { useCallback, useMemo, useState } from 'react';
 import type { PostMeta, SearchResult } from '../types';
+import { buildIndex, searchPosts } from '../utils/search';
 
 /**
  * Fuzzy search over post *metadata* only.
@@ -11,38 +11,22 @@ import type { PostMeta, SearchResult } from '../types';
  * fraction of the cost, and the index is now built once from the build-time
  * manifest.
  *
- * `includeMatches` is deliberately off: nothing consumed the fuzzy ranges, and
- * computing them is pure per-keystroke overhead. Highlighting is exact — see
- * `PostCard`.
+ * Matching is exact-ish rather than bitap-fuzzy: see `utils/search.ts` for
+ * the scoring and why the ranking it produces is the one readers expect.
+ * Highlighting is exact — see `PostCard`.
  */
-const FUSE_OPTIONS = {
-  keys: [
-    { name: 'title', weight: 3 },
-    { name: 'excerpt', weight: 1.5 },
-    { name: 'tags', weight: 2 },
-    { name: 'categories', weight: 1 },
-  ],
-  threshold: 0.32,
-  ignoreLocation: true,
-  minMatchCharLength: 2,
-  shouldSort: true,
-};
-
 const ALL: SearchResult[] = [];
 
 export const useSearch = (posts: PostMeta[]) => {
   const [term, setTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  // Keep typing responsive: the list updates on a low-priority render.
-  const deferredTerm = useDeferredValue(term);
 
-  const fuse = useMemo(() => new Fuse(posts, FUSE_OPTIONS), [posts]);
+  // The index is built once per corpus, not once per keystroke.
+  const index = useMemo(() => buildIndex(posts), [posts]);
 
-  const results = useMemo<SearchResult[]>(() => {
-    const query = deferredTerm.trim();
-    if (!query) return posts.map((item) => ({ item }));
-    return fuse.search(query);
-  }, [deferredTerm, fuse, posts]);
+  // The corpus is small enough to score synchronously, so the result list
+  // never lags the field and no second (deferred) render pass is needed.
+  const results = useMemo<SearchResult[]>(() => searchPosts(index, term), [index, term]);
 
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
@@ -61,6 +45,6 @@ export const useSearch = (posts: PostMeta[]) => {
     open,
     close,
     reset,
-    matchCount: deferredTerm.trim() ? results.length : ALL.length,
+    matchCount: term.trim() ? results.length : ALL.length,
   };
 };

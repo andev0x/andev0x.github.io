@@ -12,11 +12,6 @@ export const scrollToBottom = (): void =>
 
 export const scrollBy = (delta: number): void => window.scrollBy({ top: delta, behavior: motion() });
 
-export const scrollToFraction = (fraction: number): void => {
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  window.scrollTo({ top: Math.max(0, max * fraction), behavior: motion() });
-};
-
 /** Scroll an element into view without yanking the whole page. */
 export const revealElement = (
   element: HTMLElement | null | undefined,

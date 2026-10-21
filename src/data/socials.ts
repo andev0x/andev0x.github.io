@@ -1,7 +1,7 @@
 import { Github, Rss, Send } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
-export interface Social {
+interface Social {
   /** Human-facing platform name, used as the visible label. */
   label: string;
   /** Platform-agnostic account id, shown next to the label so a reader knows which account to open. */

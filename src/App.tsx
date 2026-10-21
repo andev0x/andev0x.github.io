@@ -140,7 +140,7 @@ function App() {
 
   /**
    * Everything the Featured shelf did not claim, in its existing order (newest
-   * first, or Fuse rank while searching). Featured posts ranked fourth and
+   * first, or search rank while searching). Featured posts ranked fourth and
    * beyond land here, which is what keeps "every post appears exactly once" true
    * once the shelf is capped.
    */

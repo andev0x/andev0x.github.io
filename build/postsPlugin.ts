@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { createRequire } from 'node:module'
-import type { Plugin } from 'vite'
+import type { ModuleNode, Plugin, ViteDevServer } from 'vite'
 
 // `front-matter` is CommonJS; load it through `createRequire` so this plugin
 // works whether Vite compiles the config as ESM or CJS.
@@ -43,6 +43,8 @@ const asNumber = (value: unknown, fallback: number): number => {
 const estimateReadingTime = (body: string): number =>
   Math.max(1, Math.round(body.split(/\s+/).filter(Boolean).length / 200))
 
+type ParsedPost = PostMeta & { file: string; body: string }
+
 /**
  * Compiles `src/data/posts/*.md` into two virtual modules:
  *
@@ -56,22 +58,36 @@ const estimateReadingTime = (body: string): number =>
  */
 export function postsPlugin(): Plugin {
   let root = process.cwd()
-  let isBuild = false
 
-  // Parsed posts are immutable for the lifetime of one build, so cache them
-  // instead of re-reading and re-parsing every markdown file on each
-  // virtual-module load. In dev (serve) we must NOT cache: markdown edits
-  // have to be re-read on the next load, otherwise HMR serves stale bodies.
-  let cachedPosts: Array<PostMeta & { file: string; body: string }> | null = null
+  // Parsed posts, immutable for as long as the sources do not change.
+  //
+  // Every virtual module asks for the whole set, so without this cache one
+  // post body costs a full directory read, a full front-matter parse and a
+  // full word count — and the twenty-first module pays for it again. The
+  // cache is dropped whenever a file in the posts directory changes.
+  let cached: ParsedPost[] | null = null
   let cachedRoot: string | null = null
 
-  const readPosts = (): Array<PostMeta & { file: string; body: string }> => {
-    if (isBuild && cachedPosts !== null && cachedRoot === root) return cachedPosts
+  // Whether the manifest has been served yet. The dev watcher replays an
+  // `add` event for every file that already exists when it starts, and those
+  // must not be mistaken for the author adding a post.
+  let hasServed = false
 
-    const absoluteDir = path.resolve(root, POSTS_DIR)
+  const postsDir = (): string => path.resolve(root, POSTS_DIR)
+
+  const invalidate = (): void => {
+    cached = null
+    cachedRoot = null
+  }
+
+  const readPosts = (): ParsedPost[] => {
+    if (cached !== null && cachedRoot === root) return cached
+
+    const absoluteDir = postsDir()
     if (!fs.existsSync(absoluteDir)) {
-      if (isBuild) { cachedPosts = []; cachedRoot = root }
-      return []
+      cached = []
+      cachedRoot = root
+      return cached
     }
 
     const posts = fs
@@ -99,12 +115,12 @@ export function postsPlugin(): Plugin {
       })
 
     // Newest first. The list view relies on this order.
-    const sorted = posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-    if (isBuild) { cachedPosts = sorted; cachedRoot = root }
-    return sorted
+    cached = posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    cachedRoot = root
+    return cached
   }
 
-  const generateManifest = (posts: Array<PostMeta & { file: string; body: string }>): string => {
+  const generateManifest = (posts: ParsedPost[]): string => {
     const loaders = posts
       .map(
         (post) =>
@@ -120,7 +136,7 @@ export function postsPlugin(): Plugin {
       )};`,
       '',
       '/** Each post body is a separate chunk, fetched only when opened. */',
-      'export const loaders = {',
+      'const loaders = {',
       loaders,
       '};',
       '',
@@ -134,11 +150,80 @@ export function postsPlugin(): Plugin {
     ].join('\n')
   }
 
+  /**
+   * Point Vite at the virtual modules a changed post belongs to.
+   *
+   * The post bodies are virtual modules, so their ids are not file paths and
+   * Vite's file-to-module map does not know about them: on its own it cannot
+   * tell that `src/data/posts/foo.md` is what `virtual:post/foo` was built
+   * from, and an edit to a post would leave the page showing the old text.
+   *
+   * Returning the modules from `handleHotUpdate` hands them back to Vite,
+   * which invalidates them and reloads the page — the usual path for a change
+   * that no module can accept.
+   */
+  const modulesFor = (server: ViteDevServer, file: string): ModuleNode[] => {
+    const modules: ModuleNode[] = []
+
+    const manifest = server.moduleGraph.getModuleById(RESOLVED_MANIFEST_ID)
+    if (manifest) modules.push(manifest)
+
+    const post = readPosts().find(
+      (candidate) => path.resolve(root, POSTS_DIR, candidate.file) === file,
+    )
+    if (post) {
+      const body = server.moduleGraph.getModuleById(`\0${POST_ID_PREFIX}${post.id}`)
+      if (body) modules.push(body)
+    }
+
+    return modules
+  }
+
   return {
     name: 'andev0x:posts',
     configResolved(config) {
       root = config.root
-      isBuild = config.command === 'build'
+    },
+
+    configureServer(server) {
+      const directory = postsDir()
+
+      // The dev server watches the project root, so the posts directory is
+      // already covered — no extra watch target is needed.
+
+      const inPostsDir = (file: string): boolean => file.startsWith(directory)
+
+      const onChange = (file: string): void => {
+        if (!inPostsDir(file)) return
+        invalidate()
+      }
+
+      // Adding or removing a post changes the manifest, which is a different
+      // module from the one that was loaded. Nothing invalidates it on its
+      // own, so the manifest is dropped and the page reloaded.
+      const onStructureChange = (file: string): void => {
+        if (!hasServed || !inPostsDir(file)) return
+        invalidate()
+        const manifest = server.moduleGraph.getModuleById(RESOLVED_MANIFEST_ID)
+        if (manifest) server.moduleGraph.invalidateModule(manifest)
+        server.ws.send({ type: 'full-reload' })
+      }
+
+      server.watcher.on('change', onChange)
+      server.watcher.on('add', onChange)
+      server.watcher.on('unlink', onChange)
+      server.watcher.on('add', onStructureChange)
+      server.watcher.on('unlink', onStructureChange)
+    },
+
+    /**
+     * A post changed: drop the parsed copy and hand Vite the modules to
+     * invalidate.
+     */
+    handleHotUpdate(ctx) {
+      if (!ctx.file.startsWith(postsDir())) return
+      invalidate()
+      return modulesFor(ctx.server, ctx.file)
     },
 
     resolveId(id) {
@@ -161,6 +246,8 @@ export function postsPlugin(): Plugin {
       }
 
       if (id !== RESOLVED_MANIFEST_ID) return null
+
+      hasServed = true
 
       // In dev, watch each markdown file so editing a post re-runs this plugin.
       if (this.meta?.watchMode) {

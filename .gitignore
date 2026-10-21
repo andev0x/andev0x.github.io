@@ -25,5 +25,10 @@ dist-ssr
 *.sw?
 .env
 
-# Block folder
+# Legacy Go backend: local-only, never built or deployed from this repository
 go-blog/
+
+# Local databases
+*.db
+*.db-shm
+*.db-wal

@@ -51,5 +51,5 @@ export const useTheme = () => {
     setThemeState((current) => (current === 'dark' ? 'light' : 'dark'));
   }, []);
 
-  return { theme, setTheme: setThemeState, toggleTheme };
+  return { theme, toggleTheme };
 };

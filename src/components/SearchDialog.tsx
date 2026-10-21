@@ -12,8 +12,8 @@ const MAX_ROWS = 8;
  * Fixed row height in px, and the height the result area is locked to.
  *
  * The area used to be `max-h-*`, i.e. content-height, so the panel grew and
- * shrank on every keystroke that changed the match count — with Fuse results
- * arriving on a deferred render, the box visibly pumped between 0 and MAX_ROWS
+ * shrank on every keystroke that changed the match count — when results
+ * arrived on a deferred render, the box visibly pumped between 0 and MAX_ROWS
  * rows while you typed. Reserving the full MAX_ROWS height up front pins the
  * dialog: the row count only changes what is drawn inside the box, never the
  * box itself.
@@ -58,8 +58,8 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({
   const [cursor, setCursor] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fuse results are served from a deferred render, so the row count can lag the
-  // field. Clamp instead of resetting, or the highlight jumps backwards mid-type.
+  // The result list can be shorter than the cursor is deep, so clamp instead
+  // of resetting, or the highlight jumps backwards mid-type.
   const rows = results.slice(0, MAX_ROWS);
   const safeCursor = rows.length === 0 ? 0 : Math.min(cursor, rows.length - 1);
 

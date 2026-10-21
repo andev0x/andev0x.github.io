@@ -356,11 +356,10 @@
 
   /* Code block frame (CodeBlock.tsx) — language bar plus body.
 
-     All geometry lives here rather than in the highlighter's inline styles.
-     react-syntax-highlighter writes its `pre[class*="language-"]` theme rule
-     straight onto the element as an inline style, and an inline style outranks
-     every class rule — a `padding: 0` there is exactly what left code flush
-     against the left edge with no inset at all. */
+     All geometry lives here. Prism emits class names (`token keyword`) rather
+     than inline styles, so nothing the highlighter writes can outrank a class
+     rule — which is exactly what used to leave code flush against the left
+     edge. */
   .code-frame {
     @apply my-6 overflow-hidden rounded-xl border border-border bg-elevated;
   }
@@ -378,6 +377,78 @@
   .code-frame pre code {
     @apply whitespace-pre;
     word-break: normal;
+  }
+
+  /* Syntax tokens.
+
+     Prism writes one span per token. Those spans carry a class name and
+     nothing else: the colour used to be an inline style, which cost a style
+     object and a long attribute string on every token of every block. Class
+     names keep the per-token DOM payload to a few bytes.
+
+     The mapping is the one the old inline-style table used — comments grey,
+     keywords green, strings gold, numbers blue, functions teal — so the
+     article reads exactly as before. */
+  .code-frame .token.comment,
+  .code-frame .token.prolog,
+  .code-frame .token.doctype,
+  .code-frame .token.cdata {
+    color: rgb(var(--c-syn-comment));
+  }
+
+  .code-frame .token.comment,
+  .code-frame .token.italic {
+    font-style: italic;
+  }
+
+  .code-frame .token.punctuation,
+  .code-frame .token.operator {
+    color: rgb(var(--c-syn-punct));
+  }
+
+  .code-frame .token.entity,
+  .code-frame .token.url,
+  .code-frame .token.variable,
+  .code-frame .token.attr-name,
+  .code-frame .token.selector,
+  .code-frame .token.property {
+    color: rgb(var(--c-syn-attr));
+  }
+
+  .code-frame .token.constant,
+  .code-frame .token.symbol,
+  .code-frame .token.deleted,
+  .code-frame .token.number {
+    color: rgb(var(--c-syn-number));
+  }
+
+  .code-frame .token.boolean,
+  .code-frame .token.string,
+  .code-frame .token.char,
+  .code-frame .token.builtin,
+  .code-frame .token.inserted,
+  .code-frame .token.regex {
+    color: rgb(var(--c-syn-string));
+  }
+
+  .code-frame .token.important {
+    color: rgb(var(--c-syn-attr));
+    font-weight: 700;
+  }
+
+  .code-frame .token.keyword,
+  .code-frame .token.atrule,
+  .code-frame .token.tag {
+    color: rgb(var(--c-syn-keyword));
+  }
+
+  .code-frame .token.function,
+  .code-frame .token.class-name {
+    color: rgb(var(--c-syn-fn));
+  }
+
+  .code-frame .token.bold {
+    font-weight: 700;
   }
 }
 
