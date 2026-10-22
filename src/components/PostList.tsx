@@ -1,7 +1,6 @@
 import React, { memo, useEffect, useRef } from 'react';
 import type { PostMeta, SearchResult } from '../types';
 import { PostCard } from './PostCard';
-import { revealElement } from '../utils/scroll';
 
 interface PostListProps {
   posts: SearchResult[];
@@ -38,9 +37,11 @@ const PostListBase: React.FC<PostListProps> = ({
   const listRef = useRef<HTMLUListElement>(null);
 
   // Keep the cursor card in view as it moves, scoped to this list rather than
-  // querying the whole document.
+  // querying the whole document. Instant (rather than smooth) scrolling keeps
+  // rapid j/k navigation from queueing up scroll animations and lagging.
   useEffect(() => {
-    revealElement(listRef.current?.querySelector<HTMLElement>('[data-cursor]') ?? null, 'center');
+    const node = listRef.current?.querySelector<HTMLElement>('[data-cursor]') ?? null;
+    node?.scrollIntoView({ block: 'center', behavior: 'auto' });
   }, [cursorIndex]);
 
   if (posts.length === 0) {

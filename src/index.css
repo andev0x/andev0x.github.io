@@ -84,7 +84,7 @@
     @apply bg-canvas text-fg font-mono antialiased;
     min-height: 100dvh;
     overflow-x: hidden;
-    text-rendering: optimizeLegibility;
+    text-rendering: auto;
   }
 
   /* Custom kunai cursor. Declared once here instead of on `*` so the browser

@@ -40,14 +40,51 @@ Useful scripts:
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Start the Vite dev server |
+| `npm run dev` | Start the Vite dev server with HMR |
+| `npm run dev:lowmem` | Live-reloading dev server with a ~55 MB resident process |
 | `npm run build` | Type-check and build `dist/` |
 | `npm run preview` | Preview the production build |
+| `npm run preview:lowmem` | Serve an existing `dist/` from the low-memory server |
 | `npm run typecheck` | Run TypeScript only |
 | `npm run lint` | Run ESLint |
 
-The dev server ignores the legacy `go-blog/` directory, `dist/`, `.git/`,
-database files and `node_modules/` so file watching stays small.
+The dev server ignores the legacy `go-blog/` directory, `dist/`, `dist-dev/`,
+`.git/`, database files and `node_modules/` so file watching stays small.
+
+### Low-memory development
+
+`npm run dev` keeps Vite's module graph, transform cache and dependency
+optimizer resident. Vite's own V8 heap is around 100 MB before the first page
+load, and it grows once a post pulls in the markdown and Prism chunks, so that
+process cannot meet a 100 MB ceiling while keeping HMR.
+
+`npm run dev:lowmem` keeps the Vite build pipeline but not the Vite dev server.
+It builds `dist-dev/` with the normal config, serves it from a small Node
+process with live reload, and runs each rebuild in a short-lived child. Measured
+here, the resident server is ~53 MB after startup and ~56 MB with the longest
+post open; a change rebuilds in about 2 seconds and then reloads the page.
+
+The trade-offs are explicit:
+
+- it is a full page reload, not React Fast Refresh;
+- the short-lived build still uses the memory a normal `vite build` needs
+  (roughly 450 MB peak on this corpus), but that process exits afterward;
+- like `npm run dev`, it does not type-check; run `npm run typecheck`
+  separately.
+
+For the strictest measurement, use Node's script runner (Node 22+) rather than
+npm, since npm keeps a ~65 MB process of its own alive for the duration of the
+script:
+
+```bash
+node --run dev:lowmem
+```
+
+Measured totals: ~70 MB for the whole tree with `node --run`, ~53 MB for
+`node scripts/dev-lowmem.mjs` alone, and ~115 MB through `npm run`, where npm
+is the extra process. `node --run preview:lowmem` serves an existing production
+`dist/` through the same small server. The site's runtime logic is identical in
+both modes.
 
 ## Writing posts
 

@@ -59,6 +59,7 @@ export default defineConfig({
       ignored: [
         '**/go-blog/**',
         '**/dist/**',
+        '**/dist-dev/**',
         '**/.git/**',
         '**/node_modules/**',
         '**/*.db',

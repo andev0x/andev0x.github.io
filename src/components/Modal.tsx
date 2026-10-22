@@ -77,7 +77,7 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, labelledBy, childre
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:p-6">
       <div
-        className="fixed inset-0 bg-overlay/70 backdrop-blur-sm animate-[enter_180ms_ease-out_both]"
+        className="fixed inset-0 bg-overlay/70 animate-[enter_180ms_ease-out_both]"
         onClick={onClose}
         aria-hidden="true"
       />
